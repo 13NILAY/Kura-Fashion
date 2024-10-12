@@ -1,8 +1,7 @@
 require('dotenv').config();
 const express = require('express');
 const app = express();
-const bodyParser = require('body-parser');
-const mongoose = require('mongoose')
+const mongoose = require('mongoose');
 const cookieParser = require("cookie-parser");
 const cors = require('cors');
 const corsOptions = require('./config/corsOptions');
@@ -10,39 +9,44 @@ const credentials = require('./middleware/credentials');
 const verifyJWT = require('./middleware/verifyJWT');
 const verifyRoles = require("./middleware/verifyRoles");
 const ROLES_LIST = require("./config/roles_list");
-const PORT=8080;
-// Connect to MongoDB
-const dbconnect = async () => {
-  if (mongoose.connections[0].readyState) return;
-  await mongoose.connect(process.env.URL)
-    .then(() => {
-      console.log('connected to MongoDB')
-    }).catch((err) => {
-      console.log('Error connecting to MongoDB:', err)
-    })
+
+let cachedDb = null;
+
+async function connectToDatabase() {
+  if (cachedDb) {
+    return cachedDb;
+  }
+  const db = await mongoose.connect(process.env.URL, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  });
+  cachedDb = db;
+  return db;
 }
 
-// Handle options credentials check - before CORS!
-// and fetch cookies credentials requirement
+// Middleware
 app.use(credentials);
-
-// Cross Origin Resource Sharing
 app.use(cors(corsOptions));
-
-// built-in middleware for json
 app.use(express.json());
-
 app.use(express.urlencoded({ extended: false }));
-
-//middleware for cookies
 app.use(cookieParser());
 
-//routes
+// Database connection middleware
+app.use(async (req, res, next) => {
+  try {
+    await connectToDatabase();
+    next();
+  } catch (error) {
+    console.error('Database connection error:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+// Routes
 app.use('/register', require('./routes/register'));
 app.use("/login", require('./routes/auth'));
 app.use("/refresh", require('./routes/refresh'));
 app.use("/logout", require("./routes/logout"));
-
 app.use("/Category", require("./routes/category"));
 app.use("/product", require("./routes/products"));
 app.use("/slider", require("./routes/slider"));
@@ -53,12 +57,17 @@ app.use(verifyJWT);
 app.use('/users', require('./routes/user'));
 
 app.use(verifyRoles(ROLES_LIST.Admin));
-
 app.use("/admin", require("./routes/admin"));
+
+// Health check route
+app.get('/api/healthcheck', (req, res) => {
+  res.status(200).json({ status: 'OK' });
+});
+
 // The following lines should be commented out or removed:
 app.listen(PORT,()=>{
     console.log("Server is running on Port",PORT);
-    dbconnect();
+    // dbconnect();
 })
 // Connect to the database before starting the application
 // dbconnect().then(() => {
