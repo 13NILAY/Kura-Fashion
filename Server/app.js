@@ -10,7 +10,7 @@ const credentials = require('./middleware/credentials');
 const verifyJWT = require('./middleware/verifyJWT');
 const verifyRoles = require("./middleware/verifyRoles");
 const ROLES_LIST = require("./config/roles_list");
-
+const PORT=8080;
 // Connect to MongoDB
 const dbconnect = async () => {
   if (mongoose.connections[0].readyState) return;
@@ -55,15 +55,14 @@ app.use('/users', require('./routes/user'));
 app.use(verifyRoles(ROLES_LIST.Admin));
 
 app.use("/admin", require("./routes/admin"));
-
-// Connect to the database before starting the application
-dbconnect().then(() => {
-  // Export the express app
-  module.exports = app;
-});
-
 // The following lines should be commented out or removed:
-// app.listen(PORT,()=>{
-//     console.log("Server is running on Port",PORT);
-//     dbconnect();
-// })
+app.listen(PORT,()=>{
+    console.log("Server is running on Port",PORT);
+    dbconnect();
+})
+// Connect to the database before starting the application
+// dbconnect().then(() => {
+//   // Export the express app
+//   module.exports = app;
+// });
+
