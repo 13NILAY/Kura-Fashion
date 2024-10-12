@@ -64,14 +64,4 @@ app.get('/api/healthcheck', (req, res) => {
   res.status(200).json({ status: 'OK' });
 });
 
-// The following lines should be commented out or removed:
-app.listen(PORT,()=>{
-    console.log("Server is running on Port",PORT);
-    // dbconnect();
-})
-// Connect to the database before starting the application
-// dbconnect().then(() => {
-//   // Export the express app
-//   module.exports = app;
-// });
-
+module.exports = app;
