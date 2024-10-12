@@ -1,5 +1,5 @@
 import axios from "axios";
-const BASE_URL ='https://kura-fashion-server.vercel.app/'
+const BASE_URL ='https://kura-fashion.onrender.com/'
 
 export default axios.create({
     baseURL: BASE_URL
