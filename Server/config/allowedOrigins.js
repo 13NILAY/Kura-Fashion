@@ -1,5 +1,6 @@
 const allowedOrigins =[
     // "https://cloathing-website-jlafsmsb2-nilay-rathods-projects.vercel.app",
+    "https://kura-fashion-server.vercel.app/",
     
     "https://kura-fashion.vercel.app",
     "http://localhost:5173",
