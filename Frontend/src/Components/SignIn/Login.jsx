@@ -100,12 +100,12 @@ const Login = () => {
             required
             className="border border-[#8A5D3B] bg-[#F9EFE6] text-[#4A2C2A] outline-none h-10 px-4 py-2 rounded-sm"
           />
-          <Link
+          {/* <Link
             to="/forgot-password"
             className="text-[#8A5D3B] text-sm mt-2 hover:text-[#6B4F3A] font-semibold duration-200 ease-in-out"
           >
             Forgot Password?
-          </Link>
+          </Link> */}
         </div>
 
         {/* Submit Button */}

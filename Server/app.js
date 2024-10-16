@@ -47,6 +47,7 @@ app.use("/logout" ,require("./routes/logout"));
 app.use("/Category",require("./routes/category"));
 app.use("/product",require("./routes/products"));
 app.use("/slider",require("./routes/slider"));
+app.use("/banner",require("./routes/banner"));
 app.use("/coupon",require("./routes/coupon"));
 app.use("/order",require("./routes/order") );
 

@@ -45,6 +45,13 @@ const Admin = () => {
                   <p className='text-sm'>Add Coupon Code </p>
                 </div>
             </Link>
+            <Link to="/account/admin/addBanner" className='  px-4 py-6 border border-typography  flex justify-between items-center font-texts font-semibold rounded-md cursor-pointer hover:bg-gray-400/10 max-sm:w-3/4 max-[470px]:w-full'>
+                <img src={orders} className='h-28 max-mobileM:h-24 p-2 '/>
+                <div className='h-full flex flex-col justify-center items-start py-6 '>
+                   <p className='text-xl font-bold'>Banners</p>
+                  <p className='text-sm'>Update Home Page Banner</p>
+                </div>
+            </Link>
               
               
 

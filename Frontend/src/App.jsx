@@ -21,6 +21,7 @@ import AddProducts from './Components/Pages/Account/Admin/AddProducts.jsx'
 import Address from './Components/Pages/Account/Address/Address.jsx'
 import AddCategory from './Components/Pages/Account/Admin/AddCategory.jsx'
 import AddSliders from './Components/Pages/Account/Admin/AddSlider.jsx'
+import AddBanners from './Components/Pages/Account/Admin/AddBanner.jsx'
 import AddCoupon from './Components/Pages/Account/Admin/AddCoupon.jsx'
 import UserOrders from './Components/Pages/Account/Orders/UserOrders.jsx'
 import TrackOrder from './Components/Pages/Account/Admin/TrackOrder.jsx'
@@ -71,6 +72,7 @@ const App =()=>{
                 <Route element={<RequireAuth allowedRoles={[Roles.Admin]}/>}>
                     <Route path='account/admin' element={<Admin/>}/>
                     <Route path='account/admin/addSlider' element={<AddSliders/>}/>
+                    <Route path='account/admin/addBanner' element={<AddBanners/>}/>
                     <Route path='account/admin/addCategory' element={<AddCategory/>}/>
                     <Route path='account/admin/addProducts' element={<AddProducts/>}/>
                     <Route path='account/admin/trackOrders' element={<TrackOrder/>}/>

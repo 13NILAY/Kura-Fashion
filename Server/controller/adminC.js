@@ -4,6 +4,7 @@ const CategorySchema =require("../model/categorySchema");
 const ProductSchema= require("../model/productSchema");
 const OrderSchema =require("../model/orderSchema");
 const Slider=require("../model/sliderSchema");
+const Banner=require("../model/bannerSchema");
 const upload = require('../middleware/multer'); 
 
 const mongoose=require("mongoose");
@@ -106,6 +107,35 @@ const deleteSlider= async(req,res)=>{
   const updatedSlider=await Slider.findByIdAndDelete(_id);
   res.status(200).json("Slider Deleted");
 }
+
+const addBanner =async(req,res)=>{
+  try {
+    console.log(req.body);
+    const banners = req.body.banners; // Assuming sliders is an array of slider objects
+    console.log(banners);
+
+    const savedBanners = await Banner.insertMany(banners); // Save all sliders at once
+    console.log(savedBanners);
+
+    res.status(201).json({
+        success: true,
+        message: 'New Banners Created',
+        sliders: savedBanners,
+    });
+} catch (err) {
+    console.error(err);
+    res.status(500).json({
+        success: false,
+        message: err.message,
+    });
+}
+}
+const deleteBanner= async(req,res)=>{
+  const {_id}=req.params;
+  const updatedBanner=await Banner.findByIdAndDelete(_id);
+  res.status(200).json("Banner Deleted");
+}
+
 const addSingleImagesForProduct =(req,res)=>{
   console.log("Monu");
   upload.single('photo')(req, res, async (err) => {
@@ -194,6 +224,6 @@ const updateOrder=async(req,res)=>{
 }
 
 module.exports = {
-  addCategory,addProduct,addImagesForProduct,addSingleImagesForProduct,addSlider,deleteSlider,updateOrder
+  addCategory,addProduct,addImagesForProduct,addSingleImagesForProduct,addSlider,deleteSlider,addBanner,deleteBanner,updateOrder
 };
  
