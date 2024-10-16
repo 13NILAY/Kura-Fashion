@@ -213,10 +213,10 @@ const Cart = () => {
                     <p>Delivery Charge:</p>
                     <p className="text-black font-semibold">₹ {deliveryCost}</p>
                   </div>
-                  <div className="flex justify-between items-center">
+                  {/* <div className="flex justify-between items-center">
                     <p>Discount:</p>
                     <p className="text-red-600 font-semibold">-₹ {discount}</p>
-                  </div>
+                  </div> */}
                   {appliedCoupon && (
                     <div className="flex justify-between items-center">
                       <p>Coupon Discount:</p>
