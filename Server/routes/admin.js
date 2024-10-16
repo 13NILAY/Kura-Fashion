@@ -20,5 +20,5 @@ router.post("/addBanner",adminC.addBanner);
 //Delete Banner
 router.delete("/deleteBanner/:_id",adminC.deleteBanner);
 //UpdateOrder
-router.patch("/updateOrderStatus/:_id",adminC.updateOrder)
+router.put("/updateOrderStatus/:_id",adminC.updateOrder)
 module.exports =router;

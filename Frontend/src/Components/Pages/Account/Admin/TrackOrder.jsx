@@ -26,7 +26,7 @@ const TrackOrder = () => {
   // Handler for updating order status
   const handleStatusChange = async (orderId, newStatus) => {
     try {
-      const response = await axiosPrivate.patch(`/admin/updateOrderStatus/${orderId}`, { status: newStatus });
+      const response = await axiosPrivate.put(`/admin/updateOrderStatus/${orderId}`, { status: newStatus });
       console.log(response);
       setOrders(prevOrders =>
         prevOrders.map(order =>
