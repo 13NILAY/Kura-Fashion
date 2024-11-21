@@ -29,6 +29,7 @@ const Register = () => {
   const [emailFocus, setEmailFocus] = useState(false);
 
   const [errMsg, setErrMsg] = useState('');
+  const [successMsg, setSuccessMsg] = useState(''); // New success message state
 
   useEffect(() => {
     setValidName(USER_REGEX.test(user));
@@ -45,7 +46,8 @@ const Register = () => {
 
   useEffect(() => {
     setErrMsg('');
-  }, [user, pwd, matchPwd]);
+    setSuccessMsg(''); // Clear the success message on input change
+  }, [user, pwd, matchPwd, email,successMsg]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -67,11 +69,17 @@ const Register = () => {
         }
       );
       console.log(JSON.stringify(response?.data));
-
+      if (response?.data) {
+        setSuccessMsg(response.data.success); // Use response data to set success message
+    } else {
+        setSuccessMsg("Registration successful!"); // Default message if the response doesn't contain `success`
+    }
+      // Clear the form and show success message
       setUser('');
       setEmail('');
       setPwd('');
       setMatchPwd('');
+       // Set success message
     } catch (err) {
       console.log(err);
       if (!err?.response) {
@@ -87,8 +95,14 @@ const Register = () => {
 
   return (
     <div className='flex flex-col mx-auto w-full max-w-md font-texts my-10 p-6 bg-[#F4E1D2] shadow-md rounded-lg border border-[#8A5D3B]'>
+      {/* Error message */}
       <p ref={errRef} className={errMsg ? "flex text-red-500 justify-center items-center" : "hidden"} aria-live='assertive'>
         <b>{errMsg} !!!</b>
+      </p>
+      
+      {/* Success message */}
+      <p className={successMsg ? "flex text-green-500 justify-center items-center mb-4" : "hidden"} aria-live='assertive'>
+        <b>{successMsg}</b>
       </p>
 
       <form onSubmit={handleSubmit}>

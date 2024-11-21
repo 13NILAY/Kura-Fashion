@@ -137,7 +137,6 @@ const deleteBanner= async(req,res)=>{
 }
 
 const addSingleImagesForProduct =(req,res)=>{
-  console.log("Monu");
   upload.single('photo')(req, res, async (err) => {
     console.log(req.file);
     console.log(req.body);

@@ -27,7 +27,7 @@ const Cart = () => {
   const email = auth.email;
 
   const deliveryCost = (1 * totalProductCost) / 100;
-  const discount = 300;
+  // const discount = 300;
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -68,7 +68,7 @@ const Cart = () => {
   }, [cart]);
 
   useEffect(() => {
-    let total = totalProductCost + deliveryCost - discount;
+    let total = totalProductCost + deliveryCost ;
     if (appliedCoupon) {
       total -= appliedCoupon.discount;
     }
