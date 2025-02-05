@@ -4,22 +4,59 @@ import { Link } from "react-router-dom";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import ArrowRightAltOutlinedIcon from '@mui/icons-material/ArrowRightAltOutlined';
+import KeyboardArrowLeftIcon from '@mui/icons-material/KeyboardArrowLeft';
+import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
 import axios from "../../../api/axios";
 
 const HomeSlider = () => {
   const [sliderData, setSliderData] = useState([]);
   const sliderRef = useRef(null);
 
+  // Custom arrow components
+  const NextArrow = ({ onClick }) => (
+    <button
+      onClick={onClick}
+      className="absolute right-4 top-1/2 -translate-y-1/2 z-10 w-10 h-10 rounded-full 
+        bg-white/50 hover:bg-white transition-all duration-200 flex items-center justify-center
+        text-[#5B3A2A] hover:text-[#5B3A2A]/80"
+    >
+      <KeyboardArrowRightIcon />
+    </button>
+  );
+
+  const PrevArrow = ({ onClick }) => (
+    <button
+      onClick={onClick}
+      className="absolute left-4 top-1/2 -translate-y-1/2 z-10 w-10 h-10 rounded-full 
+        bg-white/50 hover:bg-white transition-all duration-200 flex items-center justify-center
+        text-[#5B3A2A] hover:text-[#5B3A2A]/80"
+    >
+      <KeyboardArrowLeftIcon />
+    </button>
+  );
+
   const settings = {
-    arrows: false,
+    arrows: true,
+    nextArrow: <NextArrow />,
+    prevArrow: <PrevArrow />,
     infinite: true,
     slidesToShow: 1,
     slidesToScroll: 1,
     autoplay: true,
-    speed: 500,
-    autoplaySpeed: 3000,
-    cssEase: "linear",
-    fade: true
+    speed: 800, // Increased speed for faster transitions
+    autoplaySpeed: 4000, // Slightly longer display time
+    cssEase: "cubic-bezier(0.4, 0, 0.2, 1)", // Smooth easing function
+    fade: true,
+    pauseOnHover: true,
+    swipe: true,
+    responsive: [
+      {
+        breakpoint: 768,
+        settings: {
+          arrows: false // Hide arrows on mobile
+        }
+      }
+    ]
   };
 
   useEffect(() => {
@@ -35,6 +72,20 @@ const HomeSlider = () => {
     fetchSliderData();
   }, []);
 
+  // Keyboard navigation
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.keyCode === 37) { // Left arrow
+        sliderRef.current?.slickPrev();
+      } else if (e.keyCode === 39) { // Right arrow
+        sliderRef.current?.slickNext();
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
+
   const backgroundColorClasses = [
     'bg-[#F4D3C4]',
     'bg-[#C4A68A]',
@@ -42,6 +93,15 @@ const HomeSlider = () => {
     'bg-[#A67B5B]',
     'bg-[#F3D9D1]'
   ];
+
+  // Manual navigation methods
+  const goToNext = () => {
+    sliderRef.current?.slickNext();
+  };
+
+  const goToPrev = () => {
+    sliderRef.current?.slickPrev();
+  };
 
   return (
     <div className="w-full relative mt-20">
