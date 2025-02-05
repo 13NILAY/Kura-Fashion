@@ -1,34 +1,47 @@
 import React from 'react';
-import StarIcon from '@mui/icons-material/Star';
 import { Link } from 'react-router-dom';
+import StarIcon from '@mui/icons-material/Star';
 
-const SingleProduct = ({ product }) => {
+const SingleProduct = ({ product, className = '' }) => {
   return (
-    <>
-      <Link 
-        to={`/shop/${product._id}`} 
-        className='flex flex-col items-start justify-start rounded-lg border border-[#5c4033] p-4 my-5 text-[#40322e] shadow-md shadow-[#5c4033] transition duration-300 hover:shadow-lg hover:scale-105 bg-[#F4E1D2]'
-      >
-        {/* Image Section */}
-        <div className='bg-[#f9f4f1] rounded-lg overflow-hidden'>
-          <img src={product.frontPicture} className='h-80 w-full object-cover rounded-lg' alt={product.name} />
-        </div>
+    <Link 
+      to={`/shop/${product._id}`}
+      className={`
+        group flex flex-col justify-between rounded-lg
+        border border-[#5B3A2A] bg-[#F4D3C4] p-4
+        text-[#40322e] shadow-md transition-all duration-300
+        hover:shadow-lg hover:scale-[1.02]
+        ${className}
+      `}
+    >
+      <div className="relative w-full aspect-square rounded-lg overflow-hidden bg-[#EFE5D5]">
+        <img 
+          src={product.frontPicture} 
+          alt={product.name}
+          className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105" 
+        />
+      </div>
 
-        {/* Product Details */}
-        <div className='mx-1 mt-4'>
-          <p className='font-semibold text-2xl text-[#5c4033]'>{product.name}</p>
-          <p className='text-xl text-[#5c4033] font-semibold mt-1'>₹ {product.cost.value}</p>
+      <div className="mt-4 space-y-2">
+        <h3 className="font-headings text-[#5B3A2A] text-xl font-semibold line-clamp-2">
+          {product.name}
+        </h3>
 
-          {/* Star Ratings */}
-          <div className='flex text-[#fbb523] mt-2'>
-            {[...Array(5)].map((_, index) => (
-              <StarIcon key={index} style={{ fontSize: "large" }} />
-            ))}
-          </div>
+        <p className="font-texts text-[#5B3A2A] text-lg font-semibold">
+          ₹{product.cost.value.toLocaleString()}
+        </p>
+
+        <div className="flex">
+          {[...Array(5)].map((_, i) => (
+            <StarIcon 
+              key={i}
+              style={{ fontSize: "large", color: "#fbb523" }}
+            />
+          ))}
         </div>
-      </Link>
-    </>
+      </div>
+    </Link>
   );
-}
+};
 
 export default SingleProduct;

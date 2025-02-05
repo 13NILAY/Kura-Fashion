@@ -10,7 +10,9 @@ import TermsConditions from './Components/Pages/About/TermsConditions.jsx'
 import ShippingPolicy from './Components/Pages/About/ShippingPolicy.jsx'
 import RefundPolicy from './Components/Pages/About/RefundPolicy.jsx'
 import PrivacyPolicy from './Components/Pages/About/PrivacyPolicy.jsx'
-import SignInPage from './Components/SignIn/SignInPage.jsx'
+// import SignInPage from './Components/SignIn/SignInPage.jsx'
+import Login from './Components/SignIn/Login.jsx' 
+import Register from './Components/SignIn/Register.jsx'
 import Account from './Components/Pages/Account/Account.jsx'
 import Cart from './Components/Pages/Cart/Cart.jsx'
 import Orders from './Components/Pages/Account/Orders/Orders.jsx'
@@ -43,9 +45,13 @@ const App =()=>{
     <Provider store={store}>
       <Router>
         <Routes>
-        <Route path='/signin' element={<SignInPage/>}/>
+       
         <Route path='/unauthorized' element={<Unauthorized/>} />
-          <Route path='/' element ={<Layouts />} >
+        <Route path='/' element ={<Layouts />} >
+        <Route path='/login' element={<Login/>}/>
+          <Route path='/register' element={<Register/>}/>
+          
+          
             {/* public routes */}
             <Route index element={<Home/>}/>
             <Route path='about' element={<AboutUs/>} />
@@ -53,20 +59,21 @@ const App =()=>{
             <Route path='refund-policy' element={<RefundPolicy/>} />
             <Route path='terms-conditions' element={<TermsConditions/>} />
             <Route path='shippingPolicy' element={<ShippingPolicy/>} />
-            
+            <Route path='shop' element={<Shop/>}/>
+            <Route path='shop/:_id' element={<SingleProductDetail/>}/>
             {/* <Route path='about' element={<About/>}/> */}
             
             
             We want to protect these routes
             <Route element={<PersistLogin/>}>
                 <Route element={<RequireAuth allowedRoles={[Roles.User,Roles.Admin]}/>}>
-                    <Route path='shop' element={<Shop/>}/>
+                    
                     <Route path='account' element={<Account/>}/>
                     <Route path='account/my-orders' element={<Orders/>}/>
                     <Route path='account/account-details' element={<AccDetails/>}/>
                     <Route path='account/address' element={<Address/>}/>
                     <Route path='cart' element={<Cart/>}/>
-                    <Route path='shop/:_id' element={<SingleProductDetail/>}/>
+                    
                 </Route>
 
                 <Route element={<RequireAuth allowedRoles={[Roles.Admin]}/>}>

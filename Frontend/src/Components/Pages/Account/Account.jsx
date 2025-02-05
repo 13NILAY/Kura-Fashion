@@ -5,7 +5,8 @@ import account from '../../../assets/account.png';
 import admin from '../../../assets/Admin.png';
 import ScrollToTop from '../../../ScrollToTop';
 import { Link } from 'react-router-dom';
-import SignInPage from '../../SignIn/SignInPage';
+// import SignInPage from '../../SignIn/SignInPage';
+import Login from '../../SignIn/Login';
 import logout1 from '../../../assets/logout.png';
 import useLogout from '../../../hooks/useLogout';
 import useAuth from '../../../hooks/useAuth';
@@ -34,7 +35,7 @@ const Account = () => {
   return (
     <>
       <ScrollToTop />
-      {!loggedin && <SignInPage />}
+      {!loggedin && <Login />}
 
       {loggedin && (
         <div className='mt-20 px-sectionPadding max-md:px-mobileScreenPadding'>

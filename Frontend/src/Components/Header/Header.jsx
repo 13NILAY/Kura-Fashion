@@ -8,21 +8,30 @@ import logo from "../../assets/logo.jpg";
 
 const Header = () => {
   const [sidebar, setSidebar] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
 
   const changeSize = () => {
     if (window.innerWidth >= 768) setSidebar(false);
   };
 
+  const handleScroll = () => {
+    setIsScrolled(window.scrollY > 50);
+  };
+
   useEffect(() => {
     window.addEventListener('resize', changeSize);
-    return () => window.removeEventListener('resize', changeSize);
+    window.addEventListener('scroll', handleScroll);
+    return () => {
+      window.removeEventListener('resize', changeSize);
+      window.removeEventListener('scroll', handleScroll);
+    };
   }, []);
 
   return (
-    <header className="h-20 w-full shadow-md z-50 fixed top-0 left-0 font-texts flex justify-between items-center px-4 md:px-8 bg-[#EFE5D5] text-[#5B3A2A]">
-      {/* FOR LARGE SCREEN DEVICES */}
+    <header className={`h-20 w-full z-50 fixed top-0 left-0 font-texts flex justify-between items-center px-4 md:px-8 
+      ${isScrolled ? 'bg-[#EFE5D5] shadow-md' : 'bg-[#EFE5D5] shadow-md'} 
+      text-[#5B3A2A] transition-all duration-300 ease-in-out`}>
       <nav className="flex justify-between items-center w-full">
-        {/* Logo Section */}
         <div className="flex items-center h-full">
           <Link to="/" className="flex items-center h-full">
             <img 
@@ -33,17 +42,16 @@ const Header = () => {
           </Link>
         </div>
 
-        {/* Navigation Links */}
-        <ul className="hidden md:flex justify-between items-center font-semibold text-lg space-x-6">
+        <ul className="hidden md:flex justify-between items-center font-semibold text-base space-x-4">
           {['/', '/shop', '/about'].map((path, index) => (
-            <li key={index}>
+            <li key={index} className="group">
               <NavLink
                 to={path}
                 className={({ isActive }) =>
-                  `relative transition duration-300 ease-in-out after:transition after:duration-300 after:ease-in-out ${
+                  `relative pb-1 transition duration-300 ease-in-out ${
                     isActive
-                      ? `after:content-[""] after:w-2/3 after:absolute after:h-[0.13rem] text-[#A6896D] after:bg-[#A6896D] after:bottom-0 after:left-0`
-                      : `hover:after:content-[""] hover:after:w-2/3 hover:after:absolute hover:after:h-[0.13rem] hover:text-[#A6896D] hover:after:bg-[#A6896D] hover:after:bottom-0 hover:after:left-0`
+                      ? `text-[#A6896D] after:content-[""] after:w-full after:absolute after:h-[0.1rem] after:bg-[#A6896D] after:bottom-0 after:left-0`
+                      : `hover:text-[#A6896D] after:content-[""] after:w-0 after:absolute after:h-[0.1rem] after:bg-[#A6896D] after:bottom-0 after:left-0 after:transition-all after:duration-300 hover:after:w-full`
                   }`
                 }
               >
@@ -77,7 +85,6 @@ const Header = () => {
           </li>
         </ul>
 
-        {/* Hamburger Icon for Small Screens */}
         <div
           className="md:hidden cursor-pointer transition-transform duration-300 transform hover:scale-110"
           onClick={() => setSidebar(true)}
@@ -86,7 +93,6 @@ const Header = () => {
         </div>
       </nav>
 
-      {/* FOR SMALL SCREEN DEVICES, THE SIDEBAR IS USED */}
       {sidebar && (
         <div className="fixed inset-0 bg-[#EFE5D5]/60 z-40">
           <div

@@ -19,7 +19,7 @@ const Cart = () => {
   const cart = useSelector((state) => state.cart);
   const [isCartEmpty, setIsCartEmpty] = useState(true);
   const [totalProductCost, setTotalProductCost] = useState(0);
-  const [totalCost, setTotalCost] = useState(0);
+  const [totalCost, setTotalCost] = useState(1);
   const [user, setUser] = useState(null);
   const [couponCode, setCouponCode] = useState("");
   const [appliedCoupon, setAppliedCoupon] = useState(null);
@@ -88,7 +88,7 @@ const Cart = () => {
       const orderUrl = "/order/create-payment-gateway";
       // console.log(orderUrl);
       const orderData = await axiosPrivate.post(orderUrl, {
-          amount: totalCost,
+          amount: 1,
           currency: "INR",
           // cart:cart,
           // user:user,

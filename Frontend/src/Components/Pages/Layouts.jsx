@@ -5,14 +5,15 @@ import Footer from '../Footer/Footer';
 
 const Layouts = () => {
   return (
-    <main className='bg-[#F4E1D2] w-full flex flex-col min-h-screen '>
+    <main className='bg-[#F4E1D2] w-full flex flex-col min-h-screen'>
       {/* Header Component */}
       <Header />
 
       {/* Content Outlet */}
-      
-        <Outlet className='p-20'/>
-      
+      <div className="flex-grow flex flex-col">
+        <Outlet />
+      </div>
+
       {/* Footer Component */}
       <Footer />
     </main>

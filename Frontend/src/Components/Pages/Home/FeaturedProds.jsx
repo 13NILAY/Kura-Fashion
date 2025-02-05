@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import useAxiosPrivate from '../../../hooks/useAxiosPrivate';
 import SingleProduct from './SingleProduct';
-import { Link } from 'react-router-dom';
 
 const FeaturedProds = () => {
-  const axiosPrivate=useAxiosPrivate();
+  const axiosPrivate = useAxiosPrivate();
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -13,8 +13,7 @@ const FeaturedProds = () => {
     const fetchData = async () => {
       try {
         const allProducts = await axiosPrivate.get("/product/allProducts");
-        console.log(allProducts?.data.data);
-        setProducts(allProducts?.data.data);
+        setProducts(allProducts?.data.data.slice(0, 4));
         setLoading(false);
       } catch (err) {
         console.log(err);
@@ -27,45 +26,62 @@ const FeaturedProds = () => {
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center h-screen bg-[#E3C7A6]">
-        <p className="font-headings text-2xl text-[#4A2C2A]">Loading Products...</p>
+      <div className="w-full px-sectionPadding py-12 bg-[#F4E1D2]">
+        <div className="grid grid-cols-4 max-md:grid-cols-2 max-sm:grid-cols-1 gap-6">
+          {[...Array(4)].map((_, index) => (
+            <div key={index} className="bg-[#EFE5D5] animate-pulse h-80 rounded-lg"></div>
+          ))}
+        </div>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="flex justify-center items-center h-screen bg-[#E3C7A6]">
-        <p className="font-headings text-2xl text-red-600">{error}</p>
+      <div className="w-full px-sectionPadding py-12 bg-[#F4E1D2] text-center text-[#5B3A2A]">
+        {error}
       </div>
     );
   }
 
   return (
-    <>
-      <div className='px-sectionPadding max-md:px-mobileScreenPadding text-[#4A2C2A] w-full'>
-        <div className='flex flex-col justify-center items-center'>
-          <p className='font-headings text-5xl text-[#4A2C2A]'>Featured Products</p>
-          {/* Optional: Add a description or slogan here */}
-        </div>
-
-        {/* Grid for Featured Products */}
-        <div className='grid sm:grid-cols-3 gap-x-6 my-10 max-sm:grid-cols-2 max-mobileL:grid-cols-1'>
-          {products.map((prod) => (
-            <SingleProduct key={prod._id} product={prod} />
-          ))}
-        </div>
-
-        {/* View All Products Button */}
-        <div className='w-full flex justify-center items-center'>
-          <Link to="/shop">
-            <button className='p-3 bg-[#A6896D] text-[#F4E1D2] mt-4 border border-[#8A5D3B] shadow-md hover:bg-[#8A5D3B] transition duration-300 ease-in-out rounded-sm font-headings font-semibold'>
-              View All Products
-            </button>
+    <div className="w-full px-sectionPadding py-12 bg-[#F4E1D2]">
+      <div className="container mx-auto">
+        <div className="flex justify-between items-center mb-8">
+          <h2 className='font-headings text-[#5B3A2A] text-5xl max-md:text-4xl max-mobileL:text-3xl my-4 font-bold'>
+            Featured Products
+          </h2>
+          <Link 
+            to="/shop" 
+            className="flex items-center text-[#5B3A2A] font-headings font-semibold hover:underline transition duration-150"
+          >
+            View All Products
+            <svg 
+              xmlns="http://www.w3.org/2000/svg" 
+              className="h-5 w-5 ml-2" 
+              viewBox="0 0 20 20" 
+              fill="currentColor"
+            >
+              <path 
+                fillRule="evenodd" 
+                d="M10.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L12.586 11H5a1 1 0 110-2h7.586l-2.293-2.293a1 1 0 010-1.414z" 
+                clipRule="evenodd" 
+              />
+            </svg>
           </Link>
         </div>
+        
+        <div className="grid grid-cols-4 max-md:grid-cols-2 max-sm:grid-cols-1 gap-6">
+          {products.map((prod) => (
+            <SingleProduct 
+              key={prod._id} 
+              product={prod} 
+              className="transition-transform duration-300 hover:scale-105 hover:shadow-lg"
+            />
+          ))}
+        </div>
       </div>
-    </>
+    </div>
   );
 };
 

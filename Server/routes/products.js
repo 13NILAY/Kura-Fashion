@@ -14,4 +14,6 @@ router.get("/categoryWise/:category",productC.categoryWise);
 //view specific product
 router.get("/viewProduct/:productID",productC.viewSpecificProduct);
 
+router.delete('/deleteProduct/:id',productC.deleteProduct);
+
 module.exports =router

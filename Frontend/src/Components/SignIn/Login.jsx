@@ -61,77 +61,97 @@ const Login = () => {
   }, [persist]);
 
   return (
-    <div className="flex flex-col mx-auto w-full max-w-md font-texts my-10 p-6 bg-[#F4E1D2] shadow-md rounded-lg border border-[#8A5D3B]">
-      {/* Error Message */}
-      {errMsg && (
-        <p className="flex justify-center items-center text-red-500 font-semibold">
-          <b>{errMsg} !!!</b>
-        </p>
-      )}
+    <div className="flex-grow w-full pt-28 pb-10">
+  <div className="w-full flex items-center justify-center px-4">
+    <div className="w-full max-w-md bg-white rounded-2xl shadow-xl p-8">
+        <h2 className="text-3xl font-bold text-[#4A2C2A] text-center mb-8">Welcome Back</h2>
+        
+        {/* Error Message */}
+        {errMsg && (
+          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg mb-6">
+            <p className="font-semibold text-center">{errMsg}</p>
+          </div>
+        )}
 
-      {/* Login Form */}
-      <form onSubmit={handleSubmit}>
-        {/* Username Input */}
-        <div className="flex flex-col justify-start w-full">
-          <label className="font-headings text-[#4A2C2A] font-semibold my-2 text-lg" htmlFor="username">
-            Username / Email Id:
-          </label>
-          <input
-            type="text"
-            id="username"
-            autoComplete="off"
-            onChange={(e) => setUser(e.target.value)}
-            value={user}
-            required
-            className="border border-[#8A5D3B] bg-[#F9EFE6] text-[#4A2C2A] outline-none h-10 px-4 py-2 rounded-sm"
-          />
-        </div>
+        <form onSubmit={handleSubmit} className="space-y-6">
+          {/* Username/Email Input */}
+          <div>
+            <label className="block text-[#4A2C2A] text-sm font-semibold mb-2" htmlFor="username">
+              Username / Email
+            </label>
+            <input
+              type="text"
+              id="username"
+              autoComplete="off"
+              onChange={(e) => setUser(e.target.value)}
+              value={user}
+              required
+              className="w-full px-4 py-3 rounded-lg border border-[#8A5D3B]/30 focus:border-[#8A5D3B] focus:ring-2 focus:ring-[#8A5D3B]/20 transition-all duration-200 outline-none"
+              placeholder="Enter your username or email"
+            />
+          </div>
 
-        {/* Password Input */}
-        <div className="flex flex-col justify-start w-full my-4">
-          <label className="font-headings text-[#4A2C2A] font-semibold my-2 text-lg" htmlFor="password">
-            Password:
-          </label>
-          <input
-            type="password"
-            id="password"
-            onChange={(e) => setPwd(e.target.value)}
-            value={pwd}
-            required
-            className="border border-[#8A5D3B] bg-[#F9EFE6] text-[#4A2C2A] outline-none h-10 px-4 py-2 rounded-sm"
-          />
-          {/* <Link
-            to="/forgot-password"
-            className="text-[#8A5D3B] text-sm mt-2 hover:text-[#6B4F3A] font-semibold duration-200 ease-in-out"
-          >
-            Forgot Password?
-          </Link> */}
-        </div>
+          {/* Password Input */}
+          <div>
+            <label className="block text-[#4A2C2A] text-sm font-semibold mb-2" htmlFor="password">
+              Password
+            </label>
+            <input
+              type="password"
+              id="password"
+              onChange={(e) => setPwd(e.target.value)}
+              value={pwd}
+              required
+              className="w-full px-4 py-3 rounded-lg border border-[#8A5D3B]/30 focus:border-[#8A5D3B] focus:ring-2 focus:ring-[#8A5D3B]/20 transition-all duration-200 outline-none"
+              placeholder="Enter your password"
+            />
+          </div>
 
-        {/* Submit Button */}
-        <div className="mt-6 flex flex-col justify-center items-start">
+          {/* Remember Me & Forgot Password */}
+          <div className="flex items-center justify-between">
+            <div className="flex items-center">
+              <input
+                type="checkbox"
+                id="persist"
+                onChange={togglePersist}
+                checked={persist}
+                className="h-4 w-4 rounded border-[#8A5D3B] text-[#8A5D3B] focus:ring-[#8A5D3B]/20"
+              />
+              <label htmlFor="persist" className="ml-2 text-sm text-[#4A2C2A]">
+                Remember me
+              </label>
+            </div>
+            <Link 
+              to="/forgot-password" 
+              className="text-sm text-[#8A5D3B] hover:text-[#6B4F3A] transition-colors duration-200"
+            >
+              Forgot Password?
+            </Link>
+          </div>
+
+          {/* Sign In Button */}
           <button
             type="submit"
-            className="bg-[#8A5D3B] text-[#F4E1D2] font-headings py-2 px-4 w-full rounded-lg shadow hover:bg-[#6B4F3A] transition duration-300"
+            className="w-full bg-gradient-to-r from-[#8A5D3B] to-[#6B4F3A] text-white font-semibold py-3 px-4 rounded-lg shadow-lg hover:shadow-xl transition-all duration-200 hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-[#8A5D3B]/50"
           >
-            LOG IN
+            Sign In
           </button>
 
-          {/* Persist Checkbox */}
-          <div className="flex items-center mt-4">
-            <input
-              type="checkbox"
-              id="persist"
-              onChange={togglePersist}
-              checked={persist}
-              className="h-4 w-4 border-[#8A5D3B] accent-[#6B4F3A]"
-            />
-            <label htmlFor="persist" className="text-sm text-[#4A2C2A] font-semibold ml-2">
-              Remember me
-            </label>
+          {/* Register Link */}
+          <div className="text-center mt-6">
+            <p className="text-[#4A2C2A]">
+              Don't have an account?{' '}
+              <Link 
+                to="/register" 
+                className="text-[#8A5D3B] font-semibold hover:text-[#6B4F3A] transition-colors duration-200"
+              >
+                Register now
+              </Link>
+            </p>
           </div>
-        </div>
-      </form>
+        </form>
+      </div>
+    </div>
     </div>
   );
 };

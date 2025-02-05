@@ -1,30 +1,34 @@
 import React, { useEffect, useState } from 'react';
 import ScrollToTop from '../../../ScrollToTop.jsx';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import useAxiosPrivate from '../../../hooks/useAxiosPrivate.jsx';
 import { useDispatch } from 'react-redux';
 import useAuth from '../../../hooks/useAuth.jsx';
 import { addProductToCart } from '../../../features/cart/cartSlice.jsx';
-// import { CheckCircleIcon } from '@heroicons/react/solid'; // Icon for success
 
 const SingleProductDetail = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const { _id } = useParams();
   const { auth } = useAuth();
+  console.log(auth);
   const email = auth?.email;
+  const isAdmin = auth?.roles?.includes(5150);
   const axiosPrivate = useAxiosPrivate();
   const [product, setProduct] = useState(null);
   const [selectedSize, setSelectedSize] = useState(null);
   const [selectedColor, setSelectedColor] = useState(null);
   const [quantity, setQuantity] = useState(1);
   const [error, setError] = useState(null);
-  const [successMessage, setSuccessMessage] = useState(""); // State for success message
+  const [successMessage, setSuccessMessage] = useState("");
+  const [selectedImage, setSelectedImage] = useState(null);
 
   useEffect(() => {
     const fetchProduct = async () => {
       try {
         const response = await axiosPrivate.get(`product/viewProduct/${_id}`);
         setProduct(response.data.data);
+        setSelectedImage(response.data.data.frontPicture);
       } catch (err) {
         setError("Error fetching product details. Please try again later.");
         console.error("Error fetching Product:", err);
@@ -35,18 +39,10 @@ const SingleProductDetail = () => {
 
   const sizes = product?.size || [];
   const colors = product?.color || [];
+  const allImages = product ? [product.frontPicture, ...(product.picture || [])] : [];
 
-  const increment = () => {
-    if (quantity < 15) {
-      setQuantity(prev => prev + 1);
-    }
-  };
-
-  const decrement = () => {
-    if (quantity > 1) {
-      setQuantity(prev => prev - 1);
-    }
-  };
+  const increment = () => quantity < 15 && setQuantity(prev => prev + 1);
+  const decrement = () => quantity > 1 && setQuantity(prev => prev - 1);
 
   const handleAdd = () => {
     if (!selectedSize || !selectedColor) {
@@ -55,139 +51,167 @@ const SingleProductDetail = () => {
     }
 
     dispatch(addProductToCart({ product, quantity, selectedSize, selectedColor }, axiosPrivate, email));
-
-    // Set success message
     setSuccessMessage("Product added to cart successfully!");
-
-    // Hide success message after 3 seconds
-    setTimeout(() => {
-      setSuccessMessage("");
-    }, 3000);
+    setTimeout(() => setSuccessMessage(""), 3000);
   };
 
-  if (error) {
-    return <p className="text-center text-red-500">{error}</p>;
-  }
+  const handleDelete = async () => {
+    if (window.confirm('Are you sure you want to delete this product? This action cannot be undone.')) {
+      try {
+        await axiosPrivate.delete(`product/deleteProduct/${_id}`);
+        setSuccessMessage("Product deleted successfully!");
+        setTimeout(() => {
+          navigate('/shop'); // Redirect to products page after deletion
+        }, 2000);
+      } catch (err) {
+        setError("Error deleting product. Please try again later.");
+        console.error("Error deleting Product:", err);
+      }
+    }
+  };
 
-  if (!product) {
-    return <p>Loading...</p>;
-  }
+  if (error) return <p className="text-center text-red-500">{error}</p>;
+  if (!product) return <p>Loading...</p>;
 
   return (
     <>
       <ScrollToTop />
 
-      {/* Success message */}
       {successMessage && (
-        <div className="fixed top-24 left-1/2 transform -translate-x-1/2 bg-green-500 text-white py-4 px-6 rounded-lg shadow-xl flex items-center space-x-3 animate-fadeIn">
-          {/* <CheckCircleIcon className="w-8 h-8 text-white" /> */}
+        <div className="fixed top-24 left-1/2 transform -translate-x-1/2 bg-green-500 text-white py-4 px-6 rounded-lg shadow-xl z-50 animate-fadeIn">
           <span className="text-lg font-semibold">{successMessage}</span>
         </div>
       )}
 
-      {/* Outer Container */}
-      <div className="w-full flex justify-center mt-32 mb-8 px-2 sm:px-4">
-
-        {/* Wrapper Box */}
-        <div className="w-full max-w-4xl p-6 bg-white border border-gray-200 rounded-lg shadow-lg transition-all duration-300 ease-in-out hover:shadow-xl">
-
-          {/* MAIN IMAGE SECTION */}
-          <div className="w-full flex flex-col items-center mb-8">
-            <div className="w-full bg-gray-100 border border-gray-300 shadow-sm rounded-lg overflow-hidden">
-              <img
-                src={product.frontPicture || '/default-image.jpg'}
-                alt={product.name || 'Product Image'}
-                className="w-full h-auto object-cover rounded-lg transition-transform duration-500 ease-in-out hover:opacity-90"
-              />
-            </div>
-          </div>
-
-          {/* ADDITIONAL IMAGES */}
-          {product.picture?.length > 0 && (
-            <div className="w-full grid grid-cols-3 gap-4 mb-6">
-              {product.picture.map((pic, index) => (
-                <div className="bg-white border border-gray-300 shadow-sm rounded-md overflow-hidden transition-all hover:shadow-lg" key={index}>
-                  <img
-                    src={pic || '/default-image.jpg'}
-                    alt={`Additional view ${index + 1}`}
-                    className="w-full h-auto object-cover rounded-md transition-opacity duration-500 ease-in-out hover:opacity-80"
-                  />
-                </div>
-              ))}
-            </div>
-          )}
-
-          {/* PRODUCT DETAILS SECTION */}
-          <div className="w-full flex flex-col items-start space-y-6">
-
-            {/* Product Name */}
-            <p className="text-3xl font-bold text-gray-800">{product.name || 'Unnamed Product'}</p>
-
-            {/* Product Price */}
-            <p className="text-2xl font-semibold text-[#8A5D3B]">₹ {product.cost?.value || 'N/A'}</p>
-
-            {/* Product Description */}
-            <p className="text-base leading-relaxed text-gray-600">{product.description || 'No description available'}</p>
-
-            {/* Sizes */}
-            {sizes.length > 0 && (
-              <div className="w-full">
-                <p className="font-semibold text-lg text-gray-800">Sizes:</p>
-                <div className="grid grid-cols-4 gap-4 mt-2">
-                  {sizes.map((size, index) => (
-                    <div
-                      key={index}
-                      className={`flex justify-center items-center border-2 p-2 cursor-pointer rounded-md shadow-sm hover:shadow-md transition-all duration-300 ease-in-out ${
-                        selectedSize === size ? 'border-[#8A5D3B] bg-[#8A5D3B] text-white' : 'border-gray-300 bg-white text-gray-700'
-                      }`}
-                      onClick={() => setSelectedSize(size)}
-                    >
-                      <p className="font-medium">{size}</p>
-                    </div>
-                  ))}
-                </div>
+      <div className="w-full min-h-screen bg-[#F4E1D2] pt-32 pb-8 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto bg-white rounded-2xl shadow-xl overflow-hidden">
+          <div className="flex flex-col lg:flex-row">
+            {/* Image Gallery Section */}
+            <div className="lg:w-3/5 p-6 bg-[#EFE5D5]">
+              {/* Main Image */}
+              <div className="mb-6 rounded-xl overflow-hidden bg-white shadow-lg">
+                <img
+                  src={selectedImage || product.frontPicture}
+                  alt={product.name}
+                  className="w-full h-[500px] object-cover object-center"
+                />
               </div>
-            )}
 
-            {/* Colors */}
-            {colors.length > 0 && (
-              <div className="w-full">
-                <p className="font-semibold text-lg text-gray-800">Colors:</p>
-                <div className="flex flex-wrap gap-3 mt-3">
-                  {colors.map((color, index) => (
-                    <div
-                      key={index}
-                      className={`w-10 h-10 rounded-full cursor-pointer border-2 transition-all duration-300 ease-in-out ${
-                        selectedColor === color.colorCode ? 'border-[#8A5D3B] border-4 shadow-md' : 'border-transparent'
-                      }`}
-                      style={{ backgroundColor: color.colorCode }}
-                      onClick={() => setSelectedColor(color.colorCode)}
-                    ></div>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* Quantity */}
-            <div className="w-full flex items-center">
-              <p className="text-lg font-semibold text-gray-800 mr-4">Quantity:</p>
-              <div className="flex items-center border border-gray-300 rounded-lg shadow-sm overflow-hidden">
-                <button className="px-4 py-2 bg-gray-100 hover:bg-gray-200 transition" onClick={decrement}>-</button>
-                <p className="px-5 py-2 border-l border-r border-gray-300">{quantity}</p>
-                <button className="px-4 py-2 bg-gray-100 hover:bg-gray-200 transition" onClick={increment}>+</button>
+              {/* Thumbnail Grid */}
+              <div className="grid grid-cols-4 sm:grid-cols-5 gap-3">
+                {allImages.map((img, index) => (
+                  <button
+                    key={index}
+                    onClick={() => setSelectedImage(img)}
+                    className={`relative rounded-lg overflow-hidden aspect-square border-2 transition-all duration-300
+                      ${selectedImage === img ? 'border-[#5B3A2A] shadow-lg' : 'border-transparent hover:border-[#A6896D]'}`}
+                  >
+                    <img
+                      src={img}
+                      alt={`View ${index + 1}`}
+                      className="w-full h-full object-cover object-center"
+                    />
+                  </button>
+                ))}
               </div>
             </div>
 
-            {/* Add to Cart Button */}
-            <div className="w-full mt-6">
+            {/* Product Details Section */}
+            <div className="lg:w-2/5 p-8 bg-white">
+              <h1 className="text-4xl font-headings font-bold text-[#5B3A2A] mb-4">
+                {product.name}
+              </h1>
+              
+              <p className="text-3xl font-semibold text-[#A6896D] mb-6">
+                ₹ {product.cost?.value}
+              </p>
+
+              <p className="text-[#5B3A2A]/80 mb-8 leading-relaxed">
+                {product.description}
+              </p>
+
+              {/* Sizes */}
+              {sizes.length > 0 && (
+                <div className="mb-6">
+                  <p className="font-semibold text-lg text-[#5B3A2A] mb-3">Select Size</p>
+                  <div className="grid grid-cols-4 gap-3">
+                    {sizes.map((size, index) => (
+                      <button
+                        key={index}
+                        onClick={() => setSelectedSize(size)}
+                        className={`py-2 rounded-lg font-medium transition-all duration-300
+                          ${selectedSize === size 
+                            ? 'bg-[#5B3A2A] text-white' 
+                            : 'bg-[#EFE5D5] text-[#5B3A2A] hover:bg-[#A6896D] hover:text-white'
+                          }`}
+                      >
+                        {size}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Colors */}
+              {colors.length > 0 && (
+                <div className="mb-8">
+                  <p className="font-semibold text-lg text-[#5B3A2A] mb-3">Select Color</p>
+                  <div className="flex flex-wrap gap-3">
+                    {colors.map((color, index) => (
+                      <button
+                        key={index}
+                        onClick={() => setSelectedColor(color.colorCode)}
+                        className={`w-12 h-12 rounded-full transition-transform duration-300 hover:scale-110
+                          ${selectedColor === color.colorCode ? 'ring-4 ring-[#5B3A2A] ring-offset-2' : ''}`}
+                        style={{ backgroundColor: color.colorCode }}
+                      />
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Quantity */}
+              <div className="mb-8">
+                <p className="font-semibold text-lg text-[#5B3A2A] mb-3">Quantity</p>
+                <div className="flex items-center space-x-4">
+                  <button
+                    onClick={decrement}
+                    className="w-10 h-10 rounded-lg bg-[#EFE5D5] text-[#5B3A2A] hover:bg-[#A6896D] hover:text-white transition-colors duration-300"
+                  >
+                    -
+                  </button>
+                  <span className="text-xl font-medium text-[#5B3A2A]">{quantity}</span>
+                  <button
+                    onClick={increment}
+                    className="w-10 h-10 rounded-lg bg-[#EFE5D5] text-[#5B3A2A] hover:bg-[#A6896D] hover:text-white transition-colors duration-300"
+                  >
+                    +
+                  </button>
+                </div>
+              </div>
+
+              {/* Add to Cart Button */}
               <button
-                className="w-full py-3 text-lg font-semibold bg-[#8A5D3B] text-white rounded-lg shadow-md hover:bg-[#6B4F3A] transition-all duration-300 ease-in-out"
                 onClick={handleAdd}
+                className="w-full py-4 bg-[#5B3A2A] text-white rounded-lg font-semibold text-lg
+                  transition-all duration-300 hover:bg-[#A6896D] transform hover:scale-[1.02]
+                  focus:outline-none focus:ring-2 focus:ring-[#5B3A2A] focus:ring-offset-2"
               >
                 Add to Cart
               </button>
-            </div>
 
+              {/* Delete Button - Only visible to admin */}
+              {isAdmin && (
+                <button
+                  onClick={handleDelete}
+                  className="w-full mt-4 py-4 bg-red-600 text-white rounded-lg font-semibold text-lg
+                    transition-all duration-300 hover:bg-red-700 transform hover:scale-[1.02]
+                    focus:outline-none focus:ring-2 focus:ring-red-600 focus:ring-offset-2"
+                >
+                  Delete Product
+                </button>
+              )}
+            </div>
           </div>
         </div>
       </div>
