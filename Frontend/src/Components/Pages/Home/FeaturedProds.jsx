@@ -27,10 +27,11 @@ const FeaturedProds = () => {
   if (loading) {
     return (
       <div className="w-full px-sectionPadding py-12 bg-[#F4E1D2]">
-        <div className="grid grid-cols-4 max-md:grid-cols-2 max-sm:grid-cols-1 gap-6">
-          {[...Array(4)].map((_, index) => (
-            <div key={index} className="bg-[#EFE5D5] animate-pulse h-80 rounded-lg"></div>
-          ))}
+        <div className="flex justify-center items-center h-40">
+          <div className="flex flex-col items-center gap-3">
+            <div className="w-12 h-12 border-4 border-[#5c4033] border-t-transparent rounded-full animate-spin"></div>
+            <p className="text-sm text-[#5c4033] font-medium">Loading products...</p>
+          </div>
         </div>
       </div>
     );

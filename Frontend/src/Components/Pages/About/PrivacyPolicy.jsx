@@ -25,7 +25,7 @@ const PrivacyPolicy = () => {
           By using our site, you consent to our website's privacy policy. We reserve the right to update or modify this policy at any time, and we encourage you to review this policy periodically.
         </p>
         <p className="font-texts text-lg text-gray-700 mb-4">
-          If you have any questions about this Privacy Policy, please contact us at nilayrathod129@gmail.com .
+          If you have any questions about this Privacy Policy, please contact us at kurafashion009@gmail.com .
         </p>
       </div>
     </div>

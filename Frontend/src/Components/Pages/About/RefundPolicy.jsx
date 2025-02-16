@@ -10,7 +10,7 @@ const RefundPolicy = () => {
       </p>
         <h2 className="font-headings text-2xl font-semibold text-[#8A5D3B] mb-4">Returns</h2>
         <p className="font-texts text-lg text-gray-700 mb-4">
-          You may return any item purchased from us within 10 days of receiving it, provided the item is unused, in its original packaging, and in the same condition in which it was received. To initiate a return, please contact our customer service team at nilayrathod129@gmail.com with your order number and reason for the return.
+          You may return any item purchased from us within 10 days of receiving it, provided the item is unused, in its original packaging, and in the same condition in which it was received. To initiate a return, please contact our customer service team at kurafashion009@gmail.com with your order number and reason for the return.
         </p>
         <h2 className="font-headings text-2xl font-semibold text-[#8A5D3B] mb-4">Refunds</h2>
         <p className="font-texts text-lg text-gray-700 mb-4">

@@ -23,8 +23,8 @@ const FooterLinks = () => {
         <div className="flex flex-col w-full sm:w-1/2 md:w-1/4 mb-6">
           <h2 className="font-headings text-sm md:text-base font-semibold text-[#5B3A2A] mb-2">Help</h2>
           <ul className="font-texts text-xs md:text-sm font-semibold text-[#5B3A2A]/70 space-y-1 md:space-y-2">
-            <li>Contact Us: nilayrathod129@gmail.com</li>
-            <li>Customer Service: +91 9324263899</li>
+            <li>Contact Us: kurafashion009@gmail.com </li>
+            <li>Customer Service: +91 8369622374</li>
             <li><Link to="/terms-conditions" className="hover:text-[#5B3A2A]">Terms & Conditions</Link></li>
             <li><Link to="/shippingPolicy" className="hover:text-[#5B3A2A]">Shipping & Delivery Policy</Link></li>
           </ul>
@@ -34,9 +34,9 @@ const FooterLinks = () => {
         <div className="flex flex-col w-full sm:w-1/2 md:w-1/4 mb-6">
           <h2 className="font-headings text-sm md:text-base font-semibold text-[#5B3A2A] mb-2">Socials</h2>
           <ul className="font-texts text-xs md:text-sm font-semibold text-[#5B3A2A]/70 space-y-1 md:space-y-2">
-            <li><a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="flex items-center hover:text-[#5B3A2A]"><InstagramIcon fontSize="small" /> <span className="ml-2">Instagram</span></a></li>
-            <li><a href="https://facebook.com" target="_blank" rel="noopener noreferrer" className="flex items-center hover:text-[#5B3A2A]"><FacebookIcon fontSize="small" /> <span className="ml-2">Facebook</span></a></li>
-            <li><a href="https://twitter.com" target="_blank" rel="noopener noreferrer" className="flex items-center hover:text-[#5B3A2A]"><XIcon fontSize="small" /> <span className="ml-2">Twitter</span></a></li>
+            <li><a href="https://www.instagram.com/kura_fashion09?igsh=a2I0MHp3d3liMmp4" target="_blank" rel="noopener noreferrer" className="flex items-center hover:text-[#5B3A2A]"><InstagramIcon fontSize="small" /> <span className="ml-2">Instagram</span></a></li>
+            {/* <li><a href="https://facebook.com" target="_blank" rel="noopener noreferrer" className="flex items-center hover:text-[#5B3A2A]"><FacebookIcon fontSize="small" /> <span className="ml-2">Facebook</span></a></li> */}
+            {/* <li><a href="https://twitter.com" target="_blank" rel="noopener noreferrer" className="flex items-center hover:text-[#5B3A2A]"><XIcon fontSize="small" /> <span className="ml-2">Twitter</span></a></li> */}
           </ul>
         </div>
 

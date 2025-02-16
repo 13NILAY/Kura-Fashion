@@ -85,7 +85,7 @@ const AddCoupon = () => {
 
           <div className="mb-6">
             <label className="block text-lg font-semibold mb-2 text-[#5c4033]" htmlFor="discount">
-              Discount Amount:
+              Discount Percentage(Only Enter Number):
             </label>
             <input
               className="block w-full text-sm text-[#40322e] border border-[#5c4033] rounded-lg p-2 focus:outline-none focus:ring focus:border-blue-300"

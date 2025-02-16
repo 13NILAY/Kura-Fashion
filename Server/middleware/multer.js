@@ -24,7 +24,7 @@ const storage = new CloudinaryStorage({
 
     // Return the configuration for the file upload
     return {
-      folder: 'ClothesAndUsers', // Specify the folder
+      folder: 'Kura Fashion', // Specify the folder
       format: fileFormat, // Specify the format
       public_id: file.originalname.split('.')[0].replace(/[^a-zA-Z0-9-_]/g, ""), // Generate a safe public_id
     };

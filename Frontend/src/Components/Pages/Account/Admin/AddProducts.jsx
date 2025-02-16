@@ -10,6 +10,8 @@ const AddProducts = () => {
   const [image, setImage] = useState(null);
   const [categories, setCategories] = useState([]);
   const [colors, setColors] = useState([{ colorCode: '#000000' }]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [showSuccess, setShowSuccess] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
     description: "",
@@ -69,6 +71,7 @@ const AddProducts = () => {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
+    setIsLoading(true);
     try {
       const formData2 = new FormData();
       formData2.append("photo", image);
@@ -102,15 +105,36 @@ const AddProducts = () => {
       );
 
       if (add.status === 201) {
-        navigate("/shop");
+        setShowSuccess(true);
+        setTimeout(() => {
+          navigate("/shop");
+        }, 2000);
       }
     } catch (error) {
       console.error("Error uploading Image:", error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
   return (
     <div className="mt-20 px-sectionPadding max-md:px-mobileScreenPadding pt-10 font-texts">
+       {/* Success Alert */}
+       {showSuccess && (
+        <div className="fixed top-5 right-5 bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded">
+          <p className="font-bold">Success!</p>
+          <p>Product added successfully.</p>
+        </div>
+      )}
+
+      {/* Loading Overlay */}
+      {isLoading && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white p-4 rounded-lg">
+            <p className="text-lg font-semibold">Processing...</p>
+          </div>
+        </div>
+      )}
       <h1 className="text-4xl font-bold mb-6 text-center">
         Add a New Product
       </h1>
@@ -245,8 +269,12 @@ const AddProducts = () => {
             />
           </div>
           <div className="text-center">
-            <button type="submit" className="bg-[#5c4033] text-[#fff7ec] font-bold py-2 px-4 rounded-lg shadow hover:bg-[#6a4c39]">
-              Submit
+          <button 
+              type="submit" 
+              className="bg-[#5c4033] text-[#fff7ec] font-bold py-2 px-4 rounded-lg shadow hover:bg-[#6a4c39] disabled:opacity-50"
+              disabled={isLoading}
+            >
+              {isLoading ? 'Processing...' : 'Submit'}
             </button>
           </div>
         </form>

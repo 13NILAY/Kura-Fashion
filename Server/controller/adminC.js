@@ -11,6 +11,12 @@ const mongoose=require("mongoose");
 require("dotenv").config();
 const fs= require("fs");
 
+cloudinary.config({
+  cloud_name: process.env.cloud_name,
+  api_key: process.env.api_key,
+  api_secret: process.env.api_secret
+});
+
 //add Category
 const addCategory =async(req,res) =>{
   try{
@@ -102,11 +108,42 @@ const addSlider =async(req,res)=>{
     });
 }
 }
-const deleteSlider= async(req,res)=>{
-  const {_id}=req.params;
-  const updatedSlider=await Slider.findByIdAndDelete(_id);
-  res.status(200).json("Slider Deleted");
-}
+
+// Configure Cloudinary - this should be in your environment variables or config
+
+const deleteSlider=async (req, res) => {
+  try {
+    const { _id } = req.params;
+    const { publicId } = req.body;  // Get the publicId from request body
+    console.log(publicId);
+    if (publicId) {
+      const res1=await cloudinary.uploader.destroy(publicId);
+      console.log(res1);
+    }
+    
+    // First delete the slider from the database
+    const deletedSlider = await Slider.findByIdAndDelete(_id);
+    console.log(deletedSlider);
+    if (!deletedSlider) {
+      return res.status(404).json({ success: false, message: "Slider not found" });
+    }
+
+    // If a publicId was provided, delete the image from Cloudinary
+    
+    return res.status(200).json({ 
+      success: true, 
+      message: "Slider deleted successfully",
+      data: deletedSlider
+    });
+  } catch (error) {
+    console.error('Error deleting slider:', error);
+    return res.status(500).json({ 
+      success: false, 
+      message: "Error deleting slider",
+      error: error.message 
+    });
+  }
+};
 
 const addBanner =async(req,res)=>{
   try {
@@ -138,38 +175,26 @@ const deleteBanner= async(req,res)=>{
 
 const addSingleImagesForProduct =(req,res)=>{
   upload.single('photo')(req, res, async (err) => {
-    console.log(req.file);
-    console.log(req.body);
     if (err) {
       console.error('Error during file upload:', err);
       return res.status(500).json({ message: 'Internal Server Error', error: err.message });
     }
 
     if (req.file) {
-      try {
-        // Upload the single file to Cloudinary
-        const result = await cloudinary.uploader.upload(req.file.path);
-
-        // Return the URL of the uploaded image
-        res.status(200).json({
-          success: true,
-          message: 'File uploaded successfully',
-          fileUrl: result.secure_url,
-        });
-      } catch (uploadError) {
-        console.log('Cloudinary upload error:', uploadError);
-        res.status(500).json({ message: 'File upload failed', error: uploadError.message });
-      }
+      // No need to upload again - multer-storage-cloudinary already did it
+      res.status(200).json({
+        success: true,
+        message: 'File uploaded successfully',
+        fileUrl: req.file.path, // Use the path provided by multer-storage-cloudinary
+      });
     } else {
       console.log('No file uploaded');
       res.status(500).json({ message: 'No file uploaded' });
     }
   });
 }
-const addImagesForProduct = (req, res) => {
-  console.log("Monu");
-  console.log(req.files);
-    console.log(req.body);
+const   addImagesForProduct = (req, res) => {
+ 
   upload.array('photos', 10)(req, res, async (err) => {
     
     if (err) {
@@ -177,30 +202,14 @@ const addImagesForProduct = (req, res) => {
       return res.status(500).json({ message: 'Internal Server Error', error: err.message });
     }
     if (req.files && req.files.length > 0) {
-      try {
-        console.log(req.files);
-        // Array to hold the URLs of the uploaded images
-        const fileUrls = [];
-
-        // Iterate through the uploaded files and upload each to Cloudinary
-        for (const file of req.files) {
-          const result = await cloudinary.uploader.upload(file.path);
-          fileUrls.push(result.secure_url); // Add each URL to the array
-        }
-
-        // If you need to associate these URLs with a product, you can update the product document here.
-        // await ProductSchema.findByIdAndUpdate(req.body.productId, { images: fileUrls });
-
-        // Return the URLs of the uploaded images
-        res.status(200).json({
-          success: true,
-          message: 'Files uploaded successfully',
-          fileUrls: fileUrls,
-        });
-      } catch (uploadError) {
-        console.error('Cloudinary upload error:', uploadError);
-        res.status(500).json({ message: 'File upload failed', error: uploadError.message });
-      }
+      // Extract URLs from the already uploaded files
+      const fileUrls = req.files.map(file => file.path);
+      
+      res.status(200).json({
+        success: true,
+        message: 'Files uploaded successfully',
+        fileUrls: fileUrls,
+      });
     } else {
       console.error('No files uploaded');
       res.status(500).json({ message: 'No files uploaded' });

@@ -25,6 +25,7 @@ const Cart = () => {
   const [appliedCoupon, setAppliedCoupon] = useState(null);
   const [couponError, setCouponError] = useState("");
   const email = auth.email;
+  const [paymentDetails, setPaymentDetails] = useState(null);
 
   const deliveryCost = (1 * totalProductCost) / 100;
   // const discount = 300;
@@ -39,7 +40,7 @@ const Cart = () => {
       }
     };
     fetchUser();
-  }, [auth.email]);
+  }, [auth.email, axiosPrivate, email]);
 
   useEffect(() => {
     const fetchCartItems = async () => {
@@ -68,12 +69,13 @@ const Cart = () => {
   }, [cart]);
 
   useEffect(() => {
-    let total = totalProductCost + deliveryCost ;
+    let total = totalProductCost + deliveryCost;
     if (appliedCoupon) {
       total -= appliedCoupon.discount;
     }
+    // console.log(1);
     setTotalCost(total);
-  }, [totalProductCost, appliedCoupon]);
+  }, [totalProductCost, deliveryCost, appliedCoupon]);
 
   const handleDelete = ({ _id, size }) => {
     dispatch(deleteProductFromCart({ _id, size }, axiosPrivate, email));
@@ -83,62 +85,100 @@ const Cart = () => {
     navigate('/account/address', { state: { from: location }, replace: true });
   };
 
-  const handleChechOut= async()=>{
+  const createOrder = async ({PaymentInfo},PStatus) => {
     try {
+      console.log(PaymentInfo);
+      // Get the discount amount from applied coupon or 0 if no coupon
+      const discount = appliedCoupon ? appliedCoupon.discount : 0;
+      
+      // Prepare the order data according to the backend expectations
+      const orderData = {
+        user: user,
+        items: cart,
+        totalCost: totalCost,
+        deliveryCost: deliveryCost,
+        discount: discount,
+        paymentStatus: PStatus,
+        paymentDetails: PaymentInfo
+      };
+      
+      // Send the order data to the backend
+      const response = await axiosPrivate.post('/order/create-order', orderData);
+      
+      if (response.status === 200) {
+        alert("Order created successfully!");
+        // Clear cart in Redux store
+        dispatch(fetchCart([]));
+        navigate('/account/my-orders', { replace: true });
+      }
+    } catch (error) {
+      console.error("Error creating order:", error);
+      alert("Failed to create order. Please try again.");
+    }
+  };
+  
+  const handleCheckOut = async () => {
+    try {
+      const keyID=import.meta.env.KeyId;
       const orderUrl = "/order/create-payment-gateway";
-      // console.log(orderUrl);
       const orderData = await axiosPrivate.post(orderUrl, {
-          amount: 1,
-          currency: "INR",
-          // cart:cart,
-          // user:user,
+        amount: totalCost , // Convert to paise for Razorpay
+        currency: "INR",
       });
       setOrder(orderData.data);
-      console.log(orderData);
+      let PStatus="Failed";
       const options = {
-          key: 'rzp_live_BlDvyLU3aPQcwT', // Replace with your Razorpay key ID
-          amount: orderData.data.amount,
-          currency: orderData.data.currency,
-          name: "Kura Fashion",
-          description: "Test Transaction",
-          order_id: orderData.data.id,
-          handler: (response) => {
-              alert("Payment successful!");
-              setPaymentStatus(true);
-              setPaymentDetails({
-                razorpay_order_id:response.razorpay_order_id,
-                razorpay_payment_id:response.razorpay_payment_id,
-                razorpay_signature:response.razorpay_signature
-              });
-              console.log(response);
-              createOrder();
-          },
-          prefill: {
-              name: `${user.first_name}`,
-              email: email,
-              contact: `${user.mobileno}`,
-          },
-          notes: {
-              address:" Shanti Garden",
-          },
-          theme: {
-              color: "#F37254",
-          },
+        key: keyID, // Replace with your Razorpay key ID
+        amount: orderData.data.amount,
+        currency: orderData.data.currency,
+        name: "Kura Fashion",
+        description: "Transaction",
+        order_id: orderData.data.id,
+        handler: (response) => {
+          PStatus="Paid";
+          setPaymentStatus(true);
+          setPaymentDetails({
+            razorpay_order_id: response.razorpay_order_id,
+            razorpay_payment_id: response.razorpay_payment_id,
+            razorpay_signature: response.razorpay_signature
+          });
+          const PaymentInfo={
+            razorpay_order_id: response.razorpay_order_id,
+            razorpay_payment_id: response.razorpay_payment_id,
+            razorpay_signature: response.razorpay_signature
+          }
+          // Call createOrder after payment is successful
+          setTimeout(() => {
+            createOrder({PaymentInfo},PStatus);
+          }, 1000);
+        },
+        prefill: {
+          name: user ? `${user.first_name}` : '',
+          email: email,
+          contact: user ? `${user.mobileno}` : '',
+        },
+        notes: {
+          address: "Shanti Garden",
+        },
+        theme: {
+          color: "#5c4033",
+        },
       };
 
       const rzp1 = new window.Razorpay(options);
       rzp1.open();
-  } catch (error) {
+    } catch (error) {
       console.error("Payment error", error);
-  }
-  }
+    }
+  };
+
   const applyCoupon = async () => {
     try {
       const response = await axiosPrivate.post('/coupon/apply', {
         code: couponCode,
         totalOrderValue: totalProductCost
       });
-      console.log(response);
+      
       if (response.data.valid) {
         setAppliedCoupon(response.data);
         setCouponError("");
@@ -213,10 +253,6 @@ const Cart = () => {
                     <p>Delivery Charge:</p>
                     <p className="text-black font-semibold">₹ {deliveryCost}</p>
                   </div>
-                  {/* <div className="flex justify-between items-center">
-                    <p>Discount:</p>
-                    <p className="text-red-600 font-semibold">-₹ {discount}</p>
-                  </div> */}
                   {appliedCoupon && (
                     <div className="flex justify-between items-center">
                       <p>Coupon Discount:</p>
@@ -237,7 +273,7 @@ const Cart = () => {
                   Confirm Your Address
                 </button>
                 <button
-                  onClick={handleChechOut}
+                  onClick={handleCheckOut}
                   className="text-lg font-texts font-semibold w-full p-2 bg-[#5c4033] text-[#fff7ec] mt-4 rounded-sm border border-[#5c4033] shadow hover:bg-[#40322e]"
                 >
                   Proceed to Pay

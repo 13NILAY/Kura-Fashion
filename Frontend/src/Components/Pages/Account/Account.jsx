@@ -55,7 +55,7 @@ const Account = () => {
               </Link>
 
               {/* Account Details */}
-              <Link
+              {/* <Link
                 to='/account/account-details'
                 className='px-4 py-6 border border-typography flex justify-between items-center font-texts font-semibold rounded-md cursor-pointer hover:bg-gray-400/10 max-sm:w-3/4 max-[470px]:w-full'
               >
@@ -64,7 +64,7 @@ const Account = () => {
                   <p className='text-xl font-bold'>Account Details</p>
                   <p className='text-sm '>Get your account details here</p>
                 </div>
-              </Link>
+              </Link> */}
 
               {/* Address */}
               <Link

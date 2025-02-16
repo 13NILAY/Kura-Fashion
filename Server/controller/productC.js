@@ -53,21 +53,28 @@ const categoryWise = async (req, res) => {
     }
   };
 
-  const getPublicIdFromUrl = (url) => {
-    try {
-      // Extract the public ID from URL
-      // URL format: https://res.cloudinary.com/your-cloud-name/image/upload/v1234567890/public-id.jpg
-      const splitUrl = url.split('/');
-      const filename = splitUrl[splitUrl.length - 1];
-      // Remove file extension
-      const publicId = filename.split('.')[0];
-      return publicId;
-    } catch (error) {
-      console.error('Error extracting public ID:', error);
-      return null;
-    }
-  };
-  
+    const getPublicIdFromUrl = (url) => {
+      try {
+        // Extract the public ID from URL
+        // URL format: https://res.cloudinary.com/cloud-name/image/upload/v1234567890/folder/public-id.jpg
+        const regex = /\/v\d+\/(.+)$/;
+        const match = url.match(regex);
+        
+        if (match && match[1]) {
+          // Get everything after the version number
+          let publicId = match[1];
+          // Remove file extension
+          publicId = publicId.replace(/\.[^.]+$/, '');
+          // Decode URL encoded characters
+          publicId = decodeURIComponent(publicId);
+          return publicId;
+        }
+        return null;
+      } catch (error) {
+        console.error('Error extracting public ID:', error);
+        return null;
+      }
+    };
   const deleteProduct = async (req, res) => {
     try {
       const { id } = req.params;

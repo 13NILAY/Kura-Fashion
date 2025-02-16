@@ -11,7 +11,6 @@ const SingleProductDetail = () => {
   const navigate = useNavigate();
   const { _id } = useParams();
   const { auth } = useAuth();
-  console.log(auth);
   const email = auth?.email;
   const isAdmin = auth?.roles?.includes(5150);
   const axiosPrivate = useAxiosPrivate();
@@ -71,7 +70,7 @@ const SingleProductDetail = () => {
   };
 
   if (error) return <p className="text-center text-red-500">{error}</p>;
-  if (!product) return <p>Loading...</p>;
+  if (!product) return <div className="flex items-center justify-center min-h-screen bg-[#F4E1D2]"><p className="text-[#5B3A2A] text-xl">Loading...</p></div>;
 
   return (
     <>
@@ -90,11 +89,13 @@ const SingleProductDetail = () => {
             <div className="lg:w-3/5 p-6 bg-[#EFE5D5]">
               {/* Main Image */}
               <div className="mb-6 rounded-xl overflow-hidden bg-white shadow-lg">
-                <img
-                  src={selectedImage || product.frontPicture}
-                  alt={product.name}
-                  className="w-full h-[500px] object-cover object-center"
-                />
+                <div className="relative pt-[100%]">
+                  <img
+                    src={selectedImage || product.frontPicture}
+                    alt={product.name}
+                    className="absolute top-0 left-0 w-full h-full object-contain p-4"
+                  />
+                </div>
               </div>
 
               {/* Thumbnail Grid */}
@@ -104,13 +105,15 @@ const SingleProductDetail = () => {
                     key={index}
                     onClick={() => setSelectedImage(img)}
                     className={`relative rounded-lg overflow-hidden aspect-square border-2 transition-all duration-300
-                      ${selectedImage === img ? 'border-[#5B3A2A] shadow-lg' : 'border-transparent hover:border-[#A6896D]'}`}
+                      ${selectedImage === img ? 'border-[#5B3A2A] shadow-lg scale-105' : 'border-transparent hover:border-[#A6896D]'}`}
                   >
-                    <img
-                      src={img}
-                      alt={`View ${index + 1}`}
-                      className="w-full h-full object-cover object-center"
-                    />
+                    <div className="w-full h-full bg-white">
+                      <img
+                        src={img}
+                        alt={`View ${index + 1}`}
+                        className="w-full h-full object-contain p-1"
+                      />
+                    </div>
                   </button>
                 ))}
               </div>
@@ -123,8 +126,10 @@ const SingleProductDetail = () => {
               </h1>
               
               <p className="text-3xl font-semibold text-[#A6896D] mb-6">
-                ₹ {product.cost?.value}
+                ₹ {product.cost?.value?.toLocaleString('en-IN')}
               </p>
+
+              <div className="h-0.5 w-full bg-[#EFE5D5] mb-6"></div>
 
               <p className="text-[#5B3A2A]/80 mb-8 leading-relaxed">
                 {product.description}
@@ -141,7 +146,7 @@ const SingleProductDetail = () => {
                         onClick={() => setSelectedSize(size)}
                         className={`py-2 rounded-lg font-medium transition-all duration-300
                           ${selectedSize === size 
-                            ? 'bg-[#5B3A2A] text-white' 
+                            ? 'bg-[#5B3A2A] text-white transform scale-105 shadow-md' 
                             : 'bg-[#EFE5D5] text-[#5B3A2A] hover:bg-[#A6896D] hover:text-white'
                           }`}
                       >
@@ -162,8 +167,9 @@ const SingleProductDetail = () => {
                         key={index}
                         onClick={() => setSelectedColor(color.colorCode)}
                         className={`w-12 h-12 rounded-full transition-transform duration-300 hover:scale-110
-                          ${selectedColor === color.colorCode ? 'ring-4 ring-[#5B3A2A] ring-offset-2' : ''}`}
+                          ${selectedColor === color.colorCode ? 'ring-4 ring-[#5B3A2A] ring-offset-2 transform scale-110' : ''}`}
                         style={{ backgroundColor: color.colorCode }}
+                        title={color.colorName || color.colorCode}
                       />
                     ))}
                   </div>
@@ -173,29 +179,31 @@ const SingleProductDetail = () => {
               {/* Quantity */}
               <div className="mb-8">
                 <p className="font-semibold text-lg text-[#5B3A2A] mb-3">Quantity</p>
-                <div className="flex items-center space-x-4">
+                <div className="flex items-center space-x-4 bg-[#EFE5D5] w-fit rounded-lg p-2">
                   <button
                     onClick={decrement}
-                    className="w-10 h-10 rounded-lg bg-[#EFE5D5] text-[#5B3A2A] hover:bg-[#A6896D] hover:text-white transition-colors duration-300"
+                    className="w-10 h-10 rounded-lg bg-white text-[#5B3A2A] hover:bg-[#A6896D] hover:text-white transition-colors duration-300 shadow-sm"
                   >
                     -
                   </button>
-                  <span className="text-xl font-medium text-[#5B3A2A]">{quantity}</span>
+                  <span className="text-xl font-medium text-[#5B3A2A] w-10 text-center">{quantity}</span>
                   <button
                     onClick={increment}
-                    className="w-10 h-10 rounded-lg bg-[#EFE5D5] text-[#5B3A2A] hover:bg-[#A6896D] hover:text-white transition-colors duration-300"
+                    className="w-10 h-10 rounded-lg bg-white text-[#5B3A2A] hover:bg-[#A6896D] hover:text-white transition-colors duration-300 shadow-sm"
                   >
                     +
                   </button>
                 </div>
               </div>
 
+              <div className="h-0.5 w-full bg-[#EFE5D5] mb-6"></div>
+
               {/* Add to Cart Button */}
               <button
                 onClick={handleAdd}
                 className="w-full py-4 bg-[#5B3A2A] text-white rounded-lg font-semibold text-lg
                   transition-all duration-300 hover:bg-[#A6896D] transform hover:scale-[1.02]
-                  focus:outline-none focus:ring-2 focus:ring-[#5B3A2A] focus:ring-offset-2"
+                  focus:outline-none focus:ring-2 focus:ring-[#5B3A2A] focus:ring-offset-2 shadow-lg"
               >
                 Add to Cart
               </button>
@@ -206,7 +214,7 @@ const SingleProductDetail = () => {
                   onClick={handleDelete}
                   className="w-full mt-4 py-4 bg-red-600 text-white rounded-lg font-semibold text-lg
                     transition-all duration-300 hover:bg-red-700 transform hover:scale-[1.02]
-                    focus:outline-none focus:ring-2 focus:ring-red-600 focus:ring-offset-2"
+                    focus:outline-none focus:ring-2 focus:ring-red-600 focus:ring-offset-2 shadow-lg"
                 >
                   Delete Product
                 </button>
