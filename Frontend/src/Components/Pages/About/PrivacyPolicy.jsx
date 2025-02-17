@@ -1,35 +1,104 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import useAxiosPrivate from '../../../hooks/useAxiosPrivate';
+import EditableSection from '../../Common/EditableSection';
+import useAuth from '../../../hooks/useAuth';
 
 const PrivacyPolicy = () => {
-  return (
-    <div className="mt-20 px-8 max-md:px-4 py-16 bg-[#F4D3C4] text-typography mx-auto max-w-5xl rounded-lg shadow-lg" style={{ color: '#6B4F3A' }}>
-    <div className="max-w-4xl mx-auto">
-      <h1 className="font-headings text-3xl font-bold text-[#8A5D3B] mb-6">Privacy Policy</h1>
-      <p className="font-texts text-lg mb-4">
-        Your privacy is important to us at Kura Fashion. This Privacy Policy explains how we collect, use, and protect your personal information when you visit our website or use our services.
-      </p>
-      <h2 className="font-headings text-2xl font-semibold text-[#8A5D3B] mb-4">Information We Collect</h2>
-      <p className="font-texts text-lg mb-4 ">
-        We may collect personal information such as your name, email address, phone number, and payment details when you interact with our website, such as when you make a purchase, sign up for our newsletter, or contact us for support.
-      </p>
-        <h2 className="font-headings text-2xl font-semibold text-[#8A5D3B] mb-4">How We Use Your Information</h2>
-        <p className="font-texts text-lg text-gray-700 mb-4">
-          We use your personal information to process transactions, provide customer service, send marketing communications, and improve our website and services. We may also use your information to comply with legal obligations.
-        </p>
-        <h2 className="font-headings text-2xl font-semibold text-[#8A5D3B] mb-4">Sharing Your Information</h2>
-        <p className="font-texts text-lg text-gray-700 mb-4">
-          We do not sell, trade, or otherwise transfer your personal information to outside parties, except to trusted third parties who assist us in operating our website, conducting our business, or serving our customers, as long as those parties agree to keep this information confidential.
-        </p>
-        <h2 className="font-headings text-2xl font-semibold text-[#8A5D3B] mb-4">Your Consent</h2>
-        <p className="font-texts text-lg text-gray-700 mb-4">
-          By using our site, you consent to our website's privacy policy. We reserve the right to update or modify this policy at any time, and we encourage you to review this policy periodically.
-        </p>
-        <p className="font-texts text-lg text-gray-700 mb-4">
-          If you have any questions about this Privacy Policy, please contact us at kurafashion009@gmail.com .
-        </p>
-      </div>
-    </div>
-  );
+    const [content, setContent] = useState(null);
+    const [loading, setLoading] = useState(true);
+    const axiosPrivate = useAxiosPrivate();
+    const { auth } = useAuth();
+    const type = 'privacy';
+
+    useEffect(() => {
+        const fetchContent = async () => {
+            try {
+                const response = await axiosPrivate.get('/content/get/privacy');
+                setContent(response.data);
+            } catch (error) {
+                console.error('Error fetching content:', error);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchContent();
+    }, []);
+    const handleContentUpdate = (newContent) => {
+      setContent(newContent);
+  };
+  
+  const handleAddSection = async () => {
+      try {
+          const newSection = {
+              contentTitle: "New Section",
+              contentInfo: "Add your content here"
+          };
+          
+          const updatedContent = {
+              ...content,
+              content: [...content.content, newSection]
+          };
+  
+          const response = await axiosPrivate.put(`/content/update/${type}`, updatedContent);
+          if (response.status === 200) {
+              setContent(response.data);
+          }
+      } catch (error) {
+          console.error('Error adding section:', error);
+      }
+  };
+  
+  const handleDeleteSection = async (index) => {
+      try {
+          const updatedContent = {
+              ...content,
+              content: content.content.filter((_, i) => i !== index)
+          };
+  
+          const response = await axiosPrivate.put(`/content/update/${type}`, updatedContent);
+          if (response.status === 200) {
+              setContent(response.data);
+          }
+      } catch (error) {
+          console.error('Error deleting section:', error);
+      }
+  };
+    // ...copy handleContentUpdate, handleAddSection, and handleDeleteSection from AboutUs...
+
+    if (loading) return <div>Loading...</div>;
+
+    return (
+        <div className="mt-20 px-8 max-md:px-4 py-16 bg-[#F4D3C4] text-typography mx-auto max-w-5xl rounded-lg shadow-lg">
+            <div className="max-w-4xl mx-auto">
+                <h1 className="font-headings text-3xl font-bold text-[#8A5D3B] mb-6">
+                    {content?.title || 'Privacy Policy'}
+                </h1>
+                {content?.content.map((section, index) => (
+                    <EditableSection
+                        key={index}
+                        type="privacy"
+                        index={index}
+                        contentTitle={section.contentTitle}
+                        contentInfo={section.contentInfo}
+                        onUpdate={handleContentUpdate}
+                        onDelete={() => handleDeleteSection(index)}
+                    />
+                ))}
+                {auth?.roles?.includes(5150) && (
+                    <button
+                        onClick={handleAddSection}
+                        className="mt-4 bg-[#5c4033] hover:bg-[#5c4033]/90 text-white px-4 py-2 rounded transition-colors duration-200 flex items-center gap-2"
+                    >
+                        <span>Add New Section</span>
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                            <path fillRule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clipRule="evenodd" />
+                        </svg>
+                    </button>
+                )}
+            </div>
+        </div>
+    );
 };
 
 export default PrivacyPolicy;

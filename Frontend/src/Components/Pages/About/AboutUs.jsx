@@ -1,28 +1,106 @@
-import React from 'react';
-
+import React, { useState, useEffect } from 'react';
+// import axios from '../../api/axios';
+import useAxiosPrivate from '../../../hooks/useAxiosPrivate';
+import EditableSection from '../../Common/EditableSection';
+import useAuth from '../../../hooks/useAuth';
 const AboutUs = () => {
-  return (
-    <div
-      className="mt-20 px-8 max-md:px-4 py-16 bg-[#F4D3C4] text-typography mx-auto max-w-5xl rounded-lg shadow-lg"
-      style={{ backgroundColor: '#F4D3C4', color: '#6B4F3A' }}
-    >
-      <div className="max-w-4xl mx-auto">
-        <h1 className="font-headings text-3xl font-bold text-[#8A5D3B] mb-6">About Us</h1>
-        <p className="font-texts text-lg mb-4">
-          Welcome to <strong>Kura Fashion</strong>, where we believe in delivering the highest quality products and services to our customers. Founded in 2016, we have grown from a small startup to a trusted name in the industry. Our journey has been fueled by a passion for innovation, a commitment to customer satisfaction, and a dedication to excellence.
-        </p>
-        <p className="font-texts text-lg mb-4">
-          At <strong>Kura Fashion</strong>, we specialize in modern, wonderful, and comfortable clothes. Our team of experienced professionals works tirelessly to ensure that every product we offer meets the highest standards of quality. We are proud of our commitment to sustainability and our efforts to reduce our environmental footprint.
-        </p>
-        <p className="font-texts text-lg  mb-4">
-          Our mission is to create value for our customers by offering superior products and exceptional customer service. We believe in building lasting relationships with our customers, partners, and the communities we serve.
-        </p>
-        <p className="font-texts text-lg mb-4">
-          Thank you for choosing <strong>Kura Fashion</strong>. We look forward to serving you and exceeding your expectations.
-        </p>
-      </div>
-    </div>
-  );
+    const [content, setContent] = useState(null);
+    const [loading, setLoading] = useState(true);
+    const axiosPrivate = useAxiosPrivate();
+    const { auth } = useAuth();
+
+    useEffect(() => {
+        const fetchContent = async () => {
+            try {
+                const response = await axiosPrivate.get('/content/get/about');
+                console.log(response.data);
+                setContent(response.data);
+            } catch (error) {
+                console.error('Error fetching content:', error);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchContent();
+    }, []);
+
+    const handleContentUpdate = (newContent) => {
+        setContent(newContent);
+    };
+
+    const handleAddSection = async () => {
+        try {
+            const newSection = {
+                contentTitle: "New Section",
+                contentInfo: "Add your content here"
+            };
+            
+            const updatedContent = {
+                ...content,
+                content: [...content.content, newSection]
+            };
+
+            const response = await axiosPrivate.put(`/content/update/about`, updatedContent);
+            if (response.status === 200) {
+                setContent(response.data);
+            }
+        } catch (error) {
+            console.error('Error adding section:', error);
+        }
+    };
+
+    const handleDeleteSection = async (index) => {
+        try {
+            const updatedContent = {
+                ...content,
+                content: content.content.filter((_, i) => i !== index)
+            };
+
+            const response = await axiosPrivate.put(`/content/update/about`, updatedContent);
+            if (response.status === 200) {
+                setContent(response.data);
+            }
+        } catch (error) {
+            console.error('Error deleting section:', error);
+        }
+    };
+
+    if (loading) {
+        return <div>Loading...</div>;
+    }
+
+    return (
+        <div className="mt-20 px-8 max-md:px-4 py-16 bg-[#F4D3C4] text-typography mx-auto max-w-5xl rounded-lg shadow-lg">
+            <div className="max-w-4xl mx-auto">
+                <h1 className="font-headings text-3xl font-bold text-[#8A5D3B] mb-6">
+                    {content?.title || 'About Us'}
+                </h1>
+                {content?.content.map((section, index) => (
+                    <EditableSection
+                        key={index}
+                        type="about"
+                        index={index}
+                        contentTitle={section.contentTitle}
+                        contentInfo={section.contentInfo}
+                        onUpdate={handleContentUpdate}
+                        onDelete={() => handleDeleteSection(index)}
+                    />
+                ))}
+                {auth?.roles?.includes(5150) && (
+                    <button
+                        onClick={handleAddSection}
+                        className="mt-4 bg-[#5c4033] hover:bg-[#5c4033]/90 text-white px-4 py-2 rounded transition-colors duration-200 flex items-center gap-2"
+                    >
+                        <span>Add New Section</span>
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                            <path fillRule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clipRule="evenodd" />
+                        </svg>
+                    </button>
+                )}
+            </div>
+        </div>
+    );
 };
 
 export default AboutUs;

@@ -1,54 +1,105 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import useAxiosPrivate from '../../../hooks/useAxiosPrivate';
+import EditableSection from '../../Common/EditableSection';
+import useAuth from '../../../hooks/useAuth';
 
 const ShippingPolicy = () => {
-  return (
-    <div className="mt-20 px-8 max-md:px-4 py-16 bg-[#F4D3C4] text-typography mx-auto max-w-5xl rounded-lg shadow-lg" style={{ color: '#6B4F3A' }}>
-      <h1 className="text-3xl font-headings font-bold text-[#8A5D3B] mb-6">Shipping and Delivery Policy</h1>
-      <div className="text-sm font-texts space-y-6">
-        <section>
-          <h2 className="text-lg font-semibold text-[#8A5D3B]">1. Shipping Methods and Delivery Time</h2>
-          <p>We offer the following shipping methods:</p>
-          <ul className="list-disc list-inside">
-            <li>Standard Shipping: 5-7 business days.</li>
-            <li>Express Shipping: 2-3 business days.</li>
-            <li>Overnight Shipping: 1 business day.</li>
-          </ul>
-          <p>Delivery times may vary depending on your location and the shipping method chosen.</p>
-        </section>
+  const [content, setContent] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const axiosPrivate = useAxiosPrivate();
+  const {auth}=useAuth();
+  const type = 'shipping';
+  useEffect(() => {
+    const fetchContent = async () => {
+      try {
+        const response = await axiosPrivate.get('/content/get/shipping');
+        setContent(response.data);
+      } catch (error) {
+        console.error('Error fetching shipping policy content:', error);
+      }finally{
+        setLoading(false);
+      }
+    };
 
-        <section>
-          <h2 className="text-lg font-semibold text-[#8A5D3B]">2. Shipping Costs</h2>
-          <p>Shipping costs are calculated based on the weight of your order and the selected shipping method. The total shipping cost will be displayed at checkout before you complete your purchase.</p>
-        </section>
+    fetchContent();
+  }, [axiosPrivate]);
 
-        <section>
-          <h2 className="text-lg font-semibold text-[#8A5D3B]">3. Order Processing Time</h2>
-          <p>All orders are processed within 1-2 business days. Orders are not shipped or delivered on weekends or holidays. If we are experiencing a high volume of orders, shipments may be delayed by a few days. Please allow additional days in transit for delivery.</p>
-        </section>
+  
+    const handleContentUpdate = (newContent) => {
+      setContent(newContent);
+  };
+  
+  const handleAddSection = async () => {
+      try {
+          const newSection = {
+              contentTitle: "New Section",
+              contentInfo: "Add your content here"
+          };
+          
+          const updatedContent = {
+              ...content,
+              content: [...content.content, newSection]
+          };
+  
+          const response = await axiosPrivate.put(`/content/update/${type}`, updatedContent);
+          if (response.status === 200) {
+              setContent(response.data);
+          }
+      } catch (error) {
+          console.error('Error adding section:', error);
+      }
+  };
+  
+  const handleDeleteSection = async (index) => {
+      try {
+          const updatedContent = {
+              ...content,
+              content: content.content.filter((_, i) => i !== index)
+          };
+  
+          const response = await axiosPrivate.put(`/content/update/${type}`, updatedContent);
+          if (response.status === 200) {
+              setContent(response.data);
+          }
+      } catch (error) {
+          console.error('Error deleting section:', error);
+      }
+  };
+if (loading) return <div>Loading...</div>;
 
-        <section>
-          <h2 className="text-lg font-semibold text-[#8A5D3B]">4. International Shipping</h2>
-          <p>We currently offer international shipping to select countries. Please note that additional charges such as customs duties and taxes may apply, which are not included in our shipping costs and are the responsibility of the customer.</p>
-        </section>
-
-        <section>
-          <h2 className="text-lg font-semibold text-[#8A5D3B]">5. Order Tracking</h2>
-          <p>Once your order has been shipped, you will receive an email with your tracking number. You can track your order on the carrier's website using this number.</p>
-        </section>
-
-        <section>
-          <h2 className="text-lg font-semibold text-[#8A5D3B]">6. Missing or Lost Packages</h2>
-          <p>If you suspect your package is missing or lost, please contact our customer service team at nilayrathod129@gmail.com immediately. We will work with the carrier to resolve the issue.</p>
-        </section>
-
-        <section>
-          <h2 className="text-lg font-semibold text-[#8A5D3B]">7. Returns and Refunds</h2>
-          <p>If you wish to return a product, please review our <Link to="/refund-policy" className="hover:text-typography">Refund & Return Policy</Link> for detailed instructions.</p>
-        </section>
-      </div>
+return (
+    <div className="mt-20 px-8 max-md:px-4 py-16 bg-[#F4D3C4] text-typography mx-auto max-w-5xl rounded-lg shadow-lg">
+        <div className="max-w-4xl mx-auto">
+            <h1 className="font-headings text-3xl font-bold text-[#8A5D3B] mb-6">
+                {content?.title || 'Refund Policy'}
+            </h1>
+            {content?.content.map((section, index) => (
+                <EditableSection
+                    key={index}
+                    type="shipping"
+                    index={index}
+                    contentTitle={section.contentTitle}
+                    contentInfo={section.contentInfo}
+                    onUpdate={handleContentUpdate}
+                    onDelete={() => handleDeleteSection(index)}
+                />
+            ))}
+            {auth?.roles?.includes(5150) && (
+                <button
+                    onClick={handleAddSection}
+                    className="mt-4 bg-[#5c4033] hover:bg-[#5c4033]/90 text-white px-4 py-2 rounded transition-colors duration-200 flex items-center gap-2"
+                >
+                    <span>Add New Section</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                        <path fillRule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clipRule="evenodd" />
+                    </svg>
+                </button>
+            )}
+        </div>
     </div>
-  );
+);
 };
+
 
 export default ShippingPolicy;

@@ -50,6 +50,7 @@ app.use("/slider",require("./routes/slider"));
 app.use("/banner",require("./routes/banner"));
 app.use("/coupon",require("./routes/coupon"));
 app.use("/order",require("./routes/order") );
+app.use("/content",require("./routes/content"));
 
 app.use(verifyJWT);
 app.use('/users',require('./routes/user'));

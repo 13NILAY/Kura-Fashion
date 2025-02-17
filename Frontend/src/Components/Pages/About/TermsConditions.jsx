@@ -1,45 +1,105 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import useAxiosPrivate from '../../../hooks/useAxiosPrivate';
+import EditableSection from '../../Common/EditableSection';
+import useAuth from '../../../hooks/useAuth';
 
 const TermsConditions = () => {
-  return (
-    <div className="mt-20 px-8 max-md:px-4 py-16 bg-[#F4D3C4] text-typography mx-auto max-w-5xl rounded-lg shadow-lg" style={{ color: '#6B4F3A' }}>
-      <h1 className="text-3xl font-headings font-bold text-[#8A5D3B] mb-6">Terms and Conditions</h1>
-      {/* <h1 className="font-headings text-3xl font-bold text-[#8A5D3B] mb-6">About Us</h1> */}
-      <div className="text-sm font-texts space-y-6">
-        <section>
-          <h2 className="text-lg font-semibold text-[#8A5D3B]">1. Introduction</h2>
-          <p>Welcome to Kura Fashion. These terms and conditions outline the rules and regulations for the use of our website and services.</p>
-        </section>
-        <section>
-          <h2 className="text-lg font-semibold text-[#8A5D3B]">2. Intellectual Property Rights</h2>
-          <p>Unless otherwise stated, Kura Fashion and/or its licensors own the intellectual property rights for all material on this website. All intellectual property rights are reserved. You may view and/or print pages from [website] for your personal use, subject to restrictions set in these terms and conditions.</p>
-        </section>
+  const [content, setContent] = useState(null);
+   const [loading, setLoading] = useState(true);
+  const axiosPrivate = useAxiosPrivate();
+  const { auth } = useAuth();
+  const type = 'terms';
 
-        <section>
-          <h2 className="text-lg font-semibold text-[#8A5D3B]">3. Restrictions</h2>
-          <p>You are specifically restricted from all of the following:</p>
-          <ul className="list-disc list-inside">
-            <li>Publishing any website material in any other media without prior permission.</li>
-            <li>Selling, sublicensing, and/or otherwise commercializing any website material.</li>
-            <li>Publicly performing and/or showing any website material.</li>
-            <li>Using this website in any way that is, or may be, damaging to this website.</li>
-            <li>Using this website in any way that impacts user access to this website.</li>
-            <li>Engaging in any data mining, data harvesting, data extracting, or any other similar activity in relation to this website.</li>
-          </ul>
-        </section>
+  useEffect(() => {
+    const fetchContent = async () => {
+      try {
+        const response = await axiosPrivate.get('/content/get/terms');
+        setContent(response.data);
+      } catch (error) {
+        console.error('Error fetching terms content:', error);
+      }finally {
+        setLoading(false);
+    }
+    };
 
-        <section>
-          <h2 className="text-lg font-semibold text-[#8A5D3B]">4. Limitation of Liability</h2>
-          <p>In no event shall Kura Fashion, nor any of its officers, directors, and employees, be held liable for anything arising out of or in any way connected with your use of this website, whether such liability is under contract, tort, or otherwise.</p>
-        </section>
+    fetchContent();
+  }, [axiosPrivate]);
 
-        <section>
-          <h2 className="text-lg font-semibold text-[#8A5D3B]">5. Governing Law & Jurisdiction</h2>
-          <p>These terms will be governed by and interpreted in accordance with the laws of Maharashtra/India, and you submit to the non-exclusive jurisdiction of the state and federal courts located in Maharashtra/India for the resolution of any disputes.</p>
-        </section>
-      </div>
-    </div>
-  );
+  const handleContentUpdate = (newContent) => {
+    setContent(newContent);
 };
+
+const handleAddSection = async () => {
+    try {
+        const newSection = {
+            contentTitle: "New Section",
+            contentInfo: "Add your content here"
+        };
+        
+        const updatedContent = {
+            ...content,
+            content: [...content.content, newSection]
+        };
+
+        const response = await axiosPrivate.put(`/content/update/${type}`, updatedContent);
+        if (response.status === 200) {
+            setContent(response.data);
+        }
+    } catch (error) {
+        console.error('Error adding section:', error);
+    }
+};
+
+const handleDeleteSection = async (index) => {
+    try {
+        const updatedContent = {
+            ...content,
+            content: content.content.filter((_, i) => i !== index)
+        };
+
+        const response = await axiosPrivate.put(`/content/update/${type}`, updatedContent);
+        if (response.status === 200) {
+            setContent(response.data);
+        }
+    } catch (error) {
+        console.error('Error deleting section:', error);
+    }
+};
+
+if (loading) return <div>Loading...</div>;
+
+return (
+    <div className="mt-20 px-8 max-md:px-4 py-16 bg-[#F4D3C4] text-typography mx-auto max-w-5xl rounded-lg shadow-lg">
+        <div className="max-w-4xl mx-auto">
+            <h1 className="font-headings text-3xl font-bold text-[#8A5D3B] mb-6">
+                {content?.title || 'Refund Policy'}
+            </h1>
+            {content?.content.map((section, index) => (
+                <EditableSection
+                    key={index}
+                    type="terms"
+                    index={index}
+                    contentTitle={section.contentTitle}
+                    contentInfo={section.contentInfo}
+                    onUpdate={handleContentUpdate}
+                    onDelete={() => handleDeleteSection(index)}
+                />
+            ))}
+            {auth?.roles?.includes(5150) && (
+                <button
+                    onClick={handleAddSection}
+                    className="mt-4 bg-[#5c4033] hover:bg-[#5c4033]/90 text-white px-4 py-2 rounded transition-colors duration-200 flex items-center gap-2"
+                >
+                    <span>Add New Section</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                        <path fillRule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clipRule="evenodd" />
+                    </svg>
+                </button>
+            )}
+        </div>
+    </div>
+);
+};
+
 
 export default TermsConditions;
