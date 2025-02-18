@@ -45,7 +45,7 @@ const FooterLinks = () => {
           <h2 className="font-headings text-sm md:text-base font-semibold text-[#5B3A2A] mb-2">Our Address</h2>
           <address className="font-texts text-xs md:text-sm font-semibold text-[#5B3A2A]/70 not-italic space-y-1 md:space-y-2">
             <p>Kura Fashion</p>
-            <p>Flat 401 - Harmony Bldg, Kharkar Alley</p>
+            <p>Flat 401 - Harmony Bldg, Court Naka</p>
             <p>Thane West, Maharashtra, 400601</p>
             <p>India</p>
           </address>
