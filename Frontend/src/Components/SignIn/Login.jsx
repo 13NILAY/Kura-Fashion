@@ -28,6 +28,14 @@ const Login = () => {
     setErrMsg('');
   }, [user, pwd]);
 
+  useEffect(() => {
+    // Set persist to true by default
+    if (persist === undefined) {
+      setPersist(true);
+      localStorage.setItem('persist', 'true');
+    }
+  }, []);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -41,6 +49,10 @@ const Login = () => {
           withCredentials: true,
         }
       );
+
+      // Automatically enable persist login after successful login
+      setPersist(true);
+      localStorage.setItem('persist', 'true');
 
       const email = response?.data?.email;
       const accessToken = response?.data?.accessToken;
@@ -136,11 +148,11 @@ const Login = () => {
                   type="checkbox"
                   id="persist"
                   onChange={togglePersist}
-                  checked={persist}
+                  checked={persist ?? true}  // Default to true
                   className="h-4 w-4 rounded border-[#8A5D3B] text-[#8A5D3B] focus:ring-[#8A5D3B]/20"
                 />
                 <label htmlFor="persist" className="ml-2 text-sm text-[#4A2C2A]">
-                  Remember me
+                  Keep me signed in
                 </label>
               </div>
               <Link 

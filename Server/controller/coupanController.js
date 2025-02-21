@@ -42,7 +42,7 @@ const applyCoupon = async (req, res) => {
       discount: finalDiscount
     });
   } catch (error) {
-    console.error('Error applying coupon:', error);
+    // console.error('Error applying coupon:', error);
     res.status(500).json({ valid: false, message: 'Server error' });
   }
 };
@@ -61,7 +61,7 @@ const addCoupon = async (req, res) => {
     isActive,
     // applicableTo,
   } = req.body;
-  console.log(req.body);
+  // console.log(req.body);
   try {
     // Create a new coupon instance with all the fields
     const newCoupon = new Coupon({
@@ -84,7 +84,7 @@ const addCoupon = async (req, res) => {
     });
   } catch (err) {
     // Handle errors and send a failure response
-    console.log(err);
+    // console.log(err);
     res.status(500).json({
       message: 'Error creating coupon',
       error: err.message || err,
@@ -95,13 +95,13 @@ const addCoupon = async (req, res) => {
 
 // Get all coupons
 const getCoupons = async (req, res) => {
-  console.log("Sonu");
+  // console.log("Sonu");
   try {
     const coupons = await Coupon.find();
-    console.log(coupons);
+    // console.log(coupons);
     res.status(200).json(coupons);
   } catch (err) {
-  console.log(err);
+  // console.log(err);
     res.status(500).json({ message: 'Error fetching coupons', error: err });
   }
 };

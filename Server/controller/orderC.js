@@ -9,13 +9,13 @@ const allOrders =async (req,res)=>{
             path: 'items.productId', // Populating productId inside items array
             model: 'Product' // Ensure this matches the name of your Product model
           });
-        console.log(list);
+        // console.log(list);
             res.status(200).json({
                 success:true,
                 data:list
             });
     }catch(err){
-        console.log(err);
+        // console.log(err);
         res.status(500).json({
             success: false,
             message: err.message,
@@ -42,7 +42,7 @@ const viewSpecificUserOrder =async(req,res)=>{
 
 const createPaymentGateway= async(req,res)=>{
     const { amount, currency } = req.body;
-    console.log(req.body);
+    // console.log(req.body);
     const options = {
         amount: amount*100 , // amount in the smallest currency unit
         currency,
@@ -56,7 +56,7 @@ const createPaymentGateway= async(req,res)=>{
             },
         });
        
-        console.log(order);
+        // console.log(order);
         const timestamp=order.data.created_at;
         const date = new Date(timestamp * 1000);
 
@@ -67,13 +67,13 @@ const createPaymentGateway= async(req,res)=>{
             created_at:date.toLocaleString()
         });
     } catch (error) {
-        console.log(error)
+        // console.log(error)
         res.status(500).send(error.message);
     }
 }
 const createOrder = async (req, res) => {
     try {
-        console.log(req.body);
+        // console.log(req.body);
 
         // Map the items from the frontend to include productId, quantity, price, color, and size
         const formattedItems = req.body.items.map((item) => {
@@ -125,7 +125,7 @@ const createOrder = async (req, res) => {
             orderId: newOrder._id,
         });
     } catch (error) {
-        console.error("Error creating order: ", error);
+        // console.error("Error creating order: ", error);
         res.status(500).json({
             message: "Error creating order",
             error: error.message,

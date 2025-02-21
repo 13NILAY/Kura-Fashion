@@ -2,12 +2,12 @@ const jwt = require('jsonwebtoken');
 const User = require('../model/user'); // Ensure the correct path to your User model
 
 const verifyJWT = async (req, res, next) => {
-    console.log(req);
-    console.log(req.headers);
+    // console.log(req);
+    // console.log(req.headers);
     const authHeader = req.headers.authorization || req.headers.Authorization;
-    console.log(authHeader);
+    // console.log(authHeader);
     if (!authHeader?.startsWith('Bearer ')) {
-        console.log(true);
+        // console.log(true);
         return res.status(401).json({ message: 'Unauthorized' }); // Send 401 Unauthorized
     }
 
@@ -19,7 +19,7 @@ const verifyJWT = async (req, res, next) => {
         }
 
         try {
-            console.log(decoded);
+            // console.log(decoded);
             const user = await User.findOne({ username: decoded.UserInfo.username });
             if (!user) {
                 return res.status(404).json({ message: 'User not found' }); // Send 404 Not Found

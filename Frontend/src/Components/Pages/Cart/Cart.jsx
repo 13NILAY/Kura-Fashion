@@ -46,6 +46,7 @@ const Cart = () => {
     const fetchCartItems = async () => {
       try {
         const result = await axiosPrivate.get(`/users/viewMyCart/${email}`);
+        console.log(result);
         setCartDetails(result.data.cart);
         if (result.data.cart && result.data.cart.length > 0) {
           dispatch(fetchCart(result.data.cart));
@@ -59,10 +60,11 @@ const Cart = () => {
     };
     fetchCartItems();
   }, [dispatch, axiosPrivate, email]);
-
+  console.log(cart);
   useEffect(() => {
     let totalProduct = 0;
     cart.forEach((prod) => {
+      console.log(prod)
       totalProduct += prod.product.cost.value * prod.quantity;
     });
     setTotalProductCost(totalProduct);

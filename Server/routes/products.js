@@ -16,4 +16,6 @@ router.get("/viewProduct/:productID",productC.viewSpecificProduct);
 
 router.delete('/deleteProduct/:id',productC.deleteProduct);
 
+router.put('/updateProduct/:id', productC.updateProduct);
+
 module.exports =router

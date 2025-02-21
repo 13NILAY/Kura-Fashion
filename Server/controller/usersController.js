@@ -24,7 +24,7 @@ const getAllUser=async(req,res)=>{
 }
 const delUser=async(req,res)=>{
     try {
-        console.log(req.body.email);
+        // console.log(req.body.email);
         const user=await User.findOne({email:email});
         await user.deleteOne()
         res.send("User deleted successfully")
@@ -48,10 +48,10 @@ const updateUser=async(req,res)=>{
 
 const addCart = async (req, res) => {
   try {
-    console.log("ghftghvhhgb");
+    // console.log("ghftghvhhgb");
     const { product, selectedSize, quantity,selectedColor } = req.body;
     const productId=product._id;
-    console.log(req.body);
+    // console.log(req.body);
     // Validate input
     if (!productId || !selectedSize || !quantity || !selectedColor) {
       return res.status(400).json({ message: 'Product ID, size,color and quantity are required' });
@@ -82,10 +82,10 @@ const addCart = async (req, res) => {
 
     // Save the updated user document
     await user.save();
-    console.log('yes');
+    // console.log('yes');
     res.status(200).json({ message: 'Product added to cart successfully', cart: user.cart });
   } catch (error) {
-    console.error(error);
+    // console.error(error);
     res.status(500).json({ message: 'Internal server error' });
   }
 };
@@ -95,7 +95,7 @@ const addCart = async (req, res) => {
 //remove From Cart
 const removeFromCart = async (req, res) => {
   try {
-  console.log(req.body);
+  // console.log(req.body);
     const { productId, size ,email } = req.body;
 
     // Validate input
@@ -105,7 +105,7 @@ const removeFromCart = async (req, res) => {
 
     // Fetch the user from the database (assuming req.user.id is available via authentication middleware)
     const user = await User.findOne({email:email});
-    console.log(user);
+    // console.log(user);
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
     }
@@ -126,7 +126,7 @@ const removeFromCart = async (req, res) => {
     
     res.status(200).json({ message: 'Product removed from cart successfully', cart: user.cart });
   } catch (error) {
-    console.log(error);
+    // console.log(error);
     res.status(500).json({ message: error });
   }
 };
@@ -156,14 +156,14 @@ const getUserCart = async (req, res) => {
 
     // Fetch the user by email and populate the cart with product details
     const user = await User.findOne({ email }).populate('cart.product').exec();
-    console.log(user);
+    // console.log(user);
     if (!user) {
       return res.status(404).json({ success: false, message: "User not found" });
     }
 
     res.status(200).json({ success: true, cart: user.cart });
   } catch (err) {
-    console.log(err);
+    // console.log(err);
     res.status(500).json({ success: false, message: "Internal server error", error: err.message });
   }
 };

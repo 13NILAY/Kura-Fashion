@@ -9,20 +9,42 @@ const AddProducts = () => {
   const [images, setImages] = useState([]);
   const [image, setImage] = useState(null);
   const [categories, setCategories] = useState([]);
-  const [colors, setColors] = useState([{ colorCode: '#000000' }]);
+  const [colors, setColors] = useState(() => {
+    const savedColors = localStorage.getItem('productFormColors');
+    return savedColors ? JSON.parse(savedColors) : [{ colorCode: '#000000' }];
+  });
   const [isLoading, setIsLoading] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
-  const [formData, setFormData] = useState({
-    name: "",
-    description: "",
-    categoryName: "",
-    sizes: [""],
-    currency: "INR",
-    value: "",
-    frontPicture: "",
-    picture: "",
-    colors: colors,
+  const [formData, setFormData] = useState(() => {
+    const savedForm = localStorage.getItem('productFormData');
+    return savedForm ? JSON.parse(savedForm) : {
+      name: "",
+      description: "",
+      categoryName: "",
+      sizes: [""],
+      currency: "INR",
+      value: "",
+      frontPicture: "",
+      picture: "",
+      colors: colors,
+    };
   });
+
+  // Save form data to localStorage whenever it changes
+  useEffect(() => {
+    localStorage.setItem('productFormData', JSON.stringify(formData));
+  }, [formData]);
+
+  // Save colors to localStorage whenever they change
+  useEffect(() => {
+    localStorage.setItem('productFormColors', JSON.stringify(colors));
+  }, [colors]);
+
+  // Clear localStorage after successful submission
+  const clearStoredData = () => {
+    localStorage.removeItem('productFormData');
+    localStorage.removeItem('productFormColors');
+  };
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -105,6 +127,7 @@ const AddProducts = () => {
       );
 
       if (add.status === 201) {
+        clearStoredData();
         setShowSuccess(true);
         setTimeout(() => {
           navigate("/shop");

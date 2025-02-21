@@ -4,11 +4,11 @@ const getContent= async (req, res) => {
         try {
             const { type } = req.params;
             const content = await Content.findOne({ type });
-            console.log(content);
+            // console.log(content);
             if (!content) return res.status(404).json({ message: "Content not found" });
             res.json(content);
         } catch (error) {
-            console.log()
+            // console.log()
             res.status(500).json({ message: error.message });
         }
 }

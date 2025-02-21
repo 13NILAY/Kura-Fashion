@@ -3,7 +3,7 @@ const Slider=require("../model/sliderSchema");
 const allSlider =async (req,res)=>{
     try{
         const list= await Slider.find({});
-            console.log(list);
+            // console.log(list);
             res.status(200).json({
                 success:true,
                 data:list

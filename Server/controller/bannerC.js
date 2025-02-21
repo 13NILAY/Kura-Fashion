@@ -3,7 +3,7 @@ const Banner=require("../model/bannerSchema");
 const allBanner =async (req,res)=>{
     try{
         const list= await Banner.find({});
-            console.log(list);
+            // console.log(list);
             res.status(200).json({
                 success:true,
                 data:list

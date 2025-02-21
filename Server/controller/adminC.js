@@ -20,22 +20,22 @@ cloudinary.config({
 //add Category
 const addCategory =async(req,res) =>{
   try{
-    console.log(req.body);
+    // console.log(req.body);
     const categoryData ={
       categoryName: req.body.categoryName
     }
-    console.log(categoryData);
+    // console.log(categoryData);
     const category =new CategorySchema(categoryData);
-    console.log(category);
+    // console.log(category);
     const savedCategory = await category.save();
-    console.log(savedCategory);
+    // console.log(savedCategory);
     res.status(201).json({
       success: true,
       message: 'New Category Created',
       category: savedCategory,
     });
   }catch(err){
-    console.error( err);
+    // console.error( err);
     res.status(500).json({
       success: false,
       message: err.message,
@@ -62,7 +62,7 @@ const addProduct = async (req, res) => {
     };
 
     // Log the incoming product data for debugging purposes
-    console.log(productData);
+    // console.log(productData);
 
     // Create a new product instance
     const product = new ProductSchema(productData);
@@ -78,7 +78,7 @@ const addProduct = async (req, res) => {
     });
   } catch (err) {
     // Log the error and respond with an error message
-    console.error('Error adding product:', err);
+    // console.error('Error adding product:', err);
     res.status(500).json({
       success: false,
       message: err.message,
@@ -88,12 +88,12 @@ const addProduct = async (req, res) => {
 
 const addSlider =async(req,res)=>{
   try {
-    console.log(req.body);
+    // console.log(req.body);
     const sliders = req.body.sliders; // Assuming sliders is an array of slider objects
-    console.log(sliders);
+    // console.log(sliders);
 
     const savedSliders = await Slider.insertMany(sliders); // Save all sliders at once
-    console.log(savedSliders);
+    // console.log(savedSliders);
 
     res.status(201).json({
         success: true,
@@ -101,7 +101,7 @@ const addSlider =async(req,res)=>{
         sliders: savedSliders,
     });
 } catch (err) {
-    console.error(err);
+    // console.error(err);
     res.status(500).json({
         success: false,
         message: err.message,
@@ -115,15 +115,15 @@ const deleteSlider=async (req, res) => {
   try {
     const { _id } = req.params;
     const { publicId } = req.body;  // Get the publicId from request body
-    console.log(publicId);
+    // console.log(publicId);
     if (publicId) {
       const res1=await cloudinary.uploader.destroy(publicId);
-      console.log(res1);
+      // console.log(res1);
     }
     
     // First delete the slider from the database
     const deletedSlider = await Slider.findByIdAndDelete(_id);
-    console.log(deletedSlider);
+    // console.log(deletedSlider);
     if (!deletedSlider) {
       return res.status(404).json({ success: false, message: "Slider not found" });
     }
@@ -147,12 +147,12 @@ const deleteSlider=async (req, res) => {
 
 const addBanner =async(req,res)=>{
   try {
-    console.log(req.body);
+    // console.log(req.body);
     const banners = req.body.banners; // Assuming sliders is an array of slider objects
-    console.log(banners);
+    // console.log(banners);
 
     const savedBanners = await Banner.insertMany(banners); // Save all sliders at once
-    console.log(savedBanners);
+    // console.log(savedBanners);
 
     res.status(201).json({
         success: true,
@@ -160,7 +160,7 @@ const addBanner =async(req,res)=>{
         sliders: savedBanners,
     });
 } catch (err) {
-    console.error(err);
+    // console.error(err);
     res.status(500).json({
         success: false,
         message: err.message,
@@ -176,7 +176,7 @@ const deleteBanner= async(req,res)=>{
 const addSingleImagesForProduct =(req,res)=>{
   upload.single('photo')(req, res, async (err) => {
     if (err) {
-      console.error('Error during file upload:', err);
+      // console.error('Error during file upload:', err);
       return res.status(500).json({ message: 'Internal Server Error', error: err.message });
     }
 
@@ -188,7 +188,7 @@ const addSingleImagesForProduct =(req,res)=>{
         fileUrl: req.file.path, // Use the path provided by multer-storage-cloudinary
       });
     } else {
-      console.log('No file uploaded');
+      // console.log('No file uploaded');
       res.status(500).json({ message: 'No file uploaded' });
     }
   });
@@ -198,7 +198,7 @@ const   addImagesForProduct = (req, res) => {
   upload.array('photos', 10)(req, res, async (err) => {
     
     if (err) {
-      console.error('Error during file upload:', err);
+      // console.error('Error during file upload:', err);
       return res.status(500).json({ message: 'Internal Server Error', error: err.message });
     }
     if (req.files && req.files.length > 0) {
@@ -211,7 +211,7 @@ const   addImagesForProduct = (req, res) => {
         fileUrls: fileUrls,
       });
     } else {
-      console.error('No files uploaded');
+      // console.error('No files uploaded');
       res.status(500).json({ message: 'No files uploaded' });
     }
   });
@@ -220,18 +220,33 @@ const   addImagesForProduct = (req, res) => {
 const updateOrder=async(req,res)=>{
   try {
       const {_id}=req.params;
-      console.log(req.body);
+      // console.log(req.body);
       // const user=await User.findByIdAndUpdate(req.user._id,req.body,{ new: true })
       const newOrder=await OrderSchema.findOneAndUpdate({_id:_id},{orderStatus:req.body.status});
-      console.log(newOrder);
+      // console.log(newOrder);
       res.status(200).json(newOrder);
   } catch (error) {
-      console.log(error)
+      // console.log(error)
       res.status(500).json("Upadation not done")
   }
 }
+const deleteCategory = async (req, res) => {
+  try {
+    const { id } = req.params;
+    await Category.findByIdAndDelete(id);
+    res.status(200).json({
+      success: true,
+      message: "Category deleted successfully"
+    });
+  } catch (err) {
+    res.status(500).json({
+      success: false,
+      message: err.message,
+    });
+  }
+};
 
 module.exports = {
-  addCategory,addProduct,addImagesForProduct,addSingleImagesForProduct,addSlider,deleteSlider,addBanner,deleteBanner,updateOrder
+  addCategory,addProduct,addImagesForProduct,addSingleImagesForProduct,addSlider,deleteSlider,addBanner,deleteBanner,updateOrder,deleteCategory
 };
  

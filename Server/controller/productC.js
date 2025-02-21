@@ -4,7 +4,7 @@ const cloudinary = require('cloudinary').v2;
 
 const allProducts =async (req,res)=>{
     try{
-        console.log("sonu")
+        // console.log("sonu")
         const list= await ProductSchema.find();
             res.status(200).json({
                 success:true,
@@ -71,7 +71,7 @@ const categoryWise = async (req, res) => {
         }
         return null;
       } catch (error) {
-        console.error('Error extracting public ID:', error);
+        // console.error('Error extracting public ID:', error);
         return null;
       }
     };
@@ -103,7 +103,7 @@ const categoryWise = async (req, res) => {
             await cloudinary.uploader.destroy(publicId);
           }
         } catch (error) {
-          console.error(`Error deleting image from Cloudinary: ${url}`, error);
+          // console.error(`Error deleting image from Cloudinary: ${url}`, error);
           // Continue with deletion even if some images fail to delete
         }
       });
@@ -120,7 +120,7 @@ const categoryWise = async (req, res) => {
       });
   
     } catch (error) {
-      console.error('Error in deleteProduct:', error);
+      // console.error('Error in deleteProduct:', error);
       res.status(500).json({
         success: false,
         message: 'Error deleting product',
@@ -128,5 +128,40 @@ const categoryWise = async (req, res) => {
       });
     }
   };
+
+const updateProduct = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const updates = req.body;
+
+    // Find and update the product
+    const updatedProduct = await ProductSchema.findByIdAndUpdate(
+      id,
+      { $set: updates },
+      { new: true } // This option returns the updated document
+    );
+
+    if (!updatedProduct) {
+      return res.status(404).json({
+        success: false,
+        message: 'Product not found'
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: 'Product updated successfully',
+      data: updatedProduct
+    });
+
+  } catch (error) {
+    // console.error('Error in updateProduct:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Error updating product',
+      error: error.message
+    });
+  }
+};
   
-  module.exports ={categoryWise,allProducts,viewSpecificProduct,deleteProduct}
+  module.exports ={categoryWise,allProducts,viewSpecificProduct,deleteProduct,updateProduct}

@@ -27,12 +27,12 @@ const handleLogin= async(req,res)=>{
                     }
                 },
                 process.env.ACCESS_TOKEN_SECRET,
-                {expiresIn: "1d"}
+                {expiresIn: "180d"} // Changed to 180 days
             );
             const newRefreshToken =jwt.sign(
                 { "username":foundUser.username ,"email":foundUser.email },
                 process.env.REFRESH_TOKEN_SECRET,
-                {expiresIn: "30d"}
+                {expiresIn: "180d"} // Changed to 180 days
             )
 
             let newRefreshTokenArray =
@@ -48,7 +48,7 @@ const handleLogin= async(req,res)=>{
            
             
             //Creates Secure Cookie with refresh Token
-             res.cookie('jwt',newRefreshToken,{httpOnly:true,sameSite:'None',secure:true,maxAge:24*60*60*1000})
+             res.cookie('jwt',newRefreshToken,{httpOnly:true,sameSite:'None',secure:true,maxAge:180*24*60*60*1000}) // 180 days in milliseconds
              
              //Send Access Token and Roles to user
              res.json({email:foundUser.email, roles , accessToken});

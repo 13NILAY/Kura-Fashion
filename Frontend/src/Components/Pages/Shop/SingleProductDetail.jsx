@@ -21,6 +21,10 @@ const SingleProductDetail = () => {
   const [error, setError] = useState(null);
   const [successMessage, setSuccessMessage] = useState("");
   const [selectedImage, setSelectedImage] = useState(null);
+  const [newSize, setNewSize] = useState("");
+  const [newColorCode, setNewColorCode] = useState("");
+  const [newPrice, setNewPrice] = useState("");
+  const [isEditingPrice, setIsEditingPrice] = useState(false);
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -66,6 +70,103 @@ const SingleProductDetail = () => {
         setError("Error deleting product. Please try again later.");
         console.error("Error deleting Product:", err);
       }
+    }
+  };
+
+  const handleDeleteSize = async (sizeToDelete) => {
+    if (window.confirm(`Are you sure you want to remove size ${sizeToDelete}?`)) {
+      try {
+        await axiosPrivate.put(`product/updateProduct/${_id}`, {
+          size: product.size.filter(size => size !== sizeToDelete)
+        });
+        setProduct(prev => ({
+          ...prev,
+          size: prev.size.filter(size => size !== sizeToDelete)
+        }));
+        setSuccessMessage("Size removed successfully!");
+        setTimeout(() => setSuccessMessage(""), 3000);
+      } catch (err) {
+        setError("Error removing size. Please try again later.");
+        console.error("Error removing size:", err);
+      }
+    }
+  };
+
+  const handleDeleteColor = async (colorCodeToDelete) => {
+    if (window.confirm("Are you sure you want to remove this color?")) {
+      try {
+        await axiosPrivate.put(`product/updateProduct/${_id}`, {
+          color: product.color.filter(color => color.colorCode !== colorCodeToDelete)
+        });
+        setProduct(prev => ({
+          ...prev,
+          color: prev.color.filter(color => color.colorCode !== colorCodeToDelete)
+        }));
+        setSuccessMessage("Color removed successfully!");
+        setTimeout(() => setSuccessMessage(""), 3000);
+      } catch (err) {
+        setError("Error removing color. Please try again later.");
+        console.error("Error removing color:", err);
+      }
+    }
+  };
+
+  const handleAddSize = async () => {
+    if (!newSize.trim()) return;
+    try {
+      const updatedSizes = [...product.size, newSize.trim()];
+      await axiosPrivate.put(`product/updateProduct/${_id}`, {
+        size: updatedSizes
+      });
+      setProduct(prev => ({
+        ...prev,
+        size: updatedSizes
+      }));
+      setNewSize("");
+      setSuccessMessage("Size added successfully!");
+      setTimeout(() => setSuccessMessage(""), 3000);
+    } catch (err) {
+      setError("Error adding size. Please try again later.");
+      console.error("Error adding size:", err);
+    }
+  };
+
+  const handleAddColor = async () => {
+    if (!newColorCode.trim()) return;
+    try {
+      const updatedColors = [...product.color, { colorCode: newColorCode.trim() }];
+      await axiosPrivate.put(`product/updateProduct/${_id}`, {
+        color: updatedColors
+      });
+      setProduct(prev => ({
+        ...prev,
+        color: updatedColors
+      }));
+      setNewColorCode("");
+      setSuccessMessage("Color added successfully!");
+      setTimeout(() => setSuccessMessage(""), 3000);
+    } catch (err) {
+      setError("Error adding color. Please try again later.");
+      console.error("Error adding color:", err);
+    }
+  };
+
+  const handleUpdatePrice = async () => {
+    if (!newPrice || isNaN(newPrice)) return;
+    try {
+      await axiosPrivate.put(`product/updateProduct/${_id}`, {
+        cost: { value: parseFloat(newPrice), currency: "INR" }
+      });
+      setProduct(prev => ({
+        ...prev,
+        cost: { ...prev.cost, value: parseFloat(newPrice) }
+      }));
+      setIsEditingPrice(false);
+      setSuccessMessage("Price updated successfully!");
+      setTimeout(() => setSuccessMessage(""), 3000);
+    } catch (err) {
+      setError("Error updating price. Please try again later.");
+      console.error("Error updating price:", err);
     }
   };
 
@@ -125,9 +226,51 @@ const SingleProductDetail = () => {
                 {product.name}
               </h1>
               
-              <p className="text-3xl font-semibold text-[#A6896D] mb-6">
-                ₹ {product.cost?.value?.toLocaleString('en-IN')}
-              </p>
+              {/* Price section with edit functionality */}
+              <div className="flex items-center gap-4 mb-6">
+                {isEditingPrice ? (
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="number"
+                      value={newPrice}
+                      onChange={(e) => setNewPrice(e.target.value)}
+                      className="w-32 px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#5B3A2A]"
+                      placeholder="New price"
+                    />
+                    <button
+                      onClick={handleUpdatePrice}
+                      className="px-4 py-2 bg-[#5B3A2A] text-white rounded-lg hover:bg-[#A6896D]"
+                    >
+                      Save
+                    </button>
+                    <button
+                      onClick={() => setIsEditingPrice(false)}
+                      className="px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400"
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                ) : (
+                  <>
+                    <p className="text-3xl font-semibold text-[#A6896D]">
+                      ₹ {product.cost?.value?.toLocaleString('en-IN')}
+                    </p>
+                    {isAdmin && (
+                      <button
+                        onClick={() => {
+                          setNewPrice(product.cost?.value?.toString());
+                          setIsEditingPrice(true);
+                        }}
+                        className="text-[#5B3A2A] hover:text-[#A6896D]"
+                      >
+                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                        </svg>
+                      </button>
+                    )}
+                  </>
+                )}
+              </div>
 
               <div className="h-0.5 w-full bg-[#EFE5D5] mb-6"></div>
 
@@ -136,45 +279,108 @@ const SingleProductDetail = () => {
               </p>
 
               {/* Sizes */}
-              {sizes.length > 0 && (
-                <div className="mb-6">
-                  <p className="font-semibold text-lg text-[#5B3A2A] mb-3">Select Size</p>
+              <div className="mb-6">
+                <div className="flex justify-between items-center mb-3">
+                  <p className="font-semibold text-lg text-[#5B3A2A]">Select Size</p>
+                  {isAdmin && (
+                    <div className="flex gap-2">
+                      <input
+                        type="text"
+                        value={newSize}
+                        onChange={(e) => setNewSize(e.target.value)}
+                        className="w-20 px-2 py-1 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#5B3A2A]"
+                        placeholder="Size"
+                      />
+                      <button
+                        onClick={handleAddSize}
+                        className="px-3 py-1 bg-[#5B3A2A] text-white rounded-lg hover:bg-[#A6896D]"
+                      >
+                        Add
+                      </button>
+                    </div>
+                  )}
+                </div>
+                {sizes.length > 0 && (
                   <div className="grid grid-cols-4 gap-3">
                     {sizes.map((size, index) => (
-                      <button
-                        key={index}
-                        onClick={() => setSelectedSize(size)}
-                        className={`py-2 rounded-lg font-medium transition-all duration-300
-                          ${selectedSize === size 
-                            ? 'bg-[#5B3A2A] text-white transform scale-105 shadow-md' 
-                            : 'bg-[#EFE5D5] text-[#5B3A2A] hover:bg-[#A6896D] hover:text-white'
-                          }`}
-                      >
-                        {size}
-                      </button>
+                      <div key={index} className="relative group">
+                        <button
+                          onClick={() => setSelectedSize(size)}
+                          className={`w-full py-2 rounded-lg font-medium transition-all duration-300
+                            ${selectedSize === size 
+                              ? 'bg-[#5B3A2A] text-white transform scale-105 shadow-md' 
+                              : 'bg-[#EFE5D5] text-[#5B3A2A] hover:bg-[#A6896D] hover:text-white'
+                            }`}
+                        >
+                          {size}
+                        </button>
+                        {isAdmin && (
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleDeleteSize(size);
+                            }}
+                            className="absolute -top-2 -right-2 opacity-0 group-hover:opacity-100 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-sm transition-opacity duration-300"
+                            title="Remove size"
+                          >
+                            ×
+                          </button>
+                        )}
+                      </div>
                     ))}
                   </div>
-                </div>
-              )}
+                )}
+              </div>
 
               {/* Colors */}
-              {colors.length > 0 && (
-                <div className="mb-8">
-                  <p className="font-semibold text-lg text-[#5B3A2A] mb-3">Select Color</p>
+              <div className="mb-8">
+                <div className="flex justify-between items-center mb-3">
+                  <p className="font-semibold text-lg text-[#5B3A2A]">Select Color</p>
+                  {isAdmin && (
+                    <div className="flex gap-2">
+                      <input
+                        type="color"
+                        value={newColorCode}
+                        onChange={(e) => setNewColorCode(e.target.value)}
+                        className="w-8 h-8 rounded-lg cursor-pointer"
+                      />
+                      <button
+                        onClick={handleAddColor}
+                        className="px-3 py-1 bg-[#5B3A2A] text-white rounded-lg hover:bg-[#A6896D]"
+                      >
+                        Add
+                      </button>
+                    </div>
+                  )}
+                </div>
+                {colors.length > 0 && (
                   <div className="flex flex-wrap gap-3">
                     {colors.map((color, index) => (
-                      <button
-                        key={index}
-                        onClick={() => setSelectedColor(color.colorCode)}
-                        className={`w-12 h-12 rounded-full transition-transform duration-300 hover:scale-110
-                          ${selectedColor === color.colorCode ? 'ring-4 ring-[#5B3A2A] ring-offset-2 transform scale-110' : ''}`}
-                        style={{ backgroundColor: color.colorCode }}
-                        title={color.colorName || color.colorCode}
-                      />
+                      <div key={index} className="relative group">
+                        <button
+                          onClick={() => setSelectedColor(color.colorCode)}
+                          className={`w-12 h-12 rounded-full transition-transform duration-300 hover:scale-110
+                            ${selectedColor === color.colorCode ? 'ring-4 ring-[#5B3A2A] ring-offset-2 transform scale-110' : ''}`}
+                          style={{ backgroundColor: color.colorCode }}
+                          title={color.colorName || color.colorCode}
+                        />
+                        {isAdmin && (
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleDeleteColor(color.colorCode);
+                            }}
+                            className="absolute -top-2 -right-2 opacity-0 group-hover:opacity-100 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-sm transition-opacity duration-300"
+                            title="Remove color"
+                          >
+                            ×
+                          </button>
+                        )}
+                      </div>
                     ))}
                   </div>
-                </div>
-              )}
+                )}
+              </div>
 
               {/* Quantity */}
               <div className="mb-8">
