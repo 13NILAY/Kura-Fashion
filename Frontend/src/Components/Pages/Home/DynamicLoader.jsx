@@ -1,102 +1,243 @@
-import React, { useState, useEffect } from 'react';
-import { 
-  LocalMallOutlined, 
-  ShoppingCartOutlined, 
-  StarBorderOutlined, 
-  LocalShippingOutlined, 
-  PaymentOutlined, 
-  SpaOutlined,
-  DiamondOutlined,
-  ColorLensOutlined,
-  FavoriteOutlined
-} from '@mui/icons-material';
+import React, { useEffect, useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 
 const DynamicLoader = ({ onComplete }) => {
-  const [activeIndex, setActiveIndex] = useState(0);
-  const [progress, setProgress] = useState(0);
-  
-  const icons = [
-    { Icon: LocalMallOutlined, text: "Exploring Exclusive Collections", color: "#8A5D3B" },
-    { Icon: ShoppingCartOutlined, text: "Preparing Your Personalized Experience", color: "#5B3A2A" },
-    { Icon: StarBorderOutlined, text: "Curating Premium Products", color: "#A6896D" },
-    { Icon: LocalShippingOutlined, text: "Optimizing Delivery Networks", color: "#6D4C41" },
-    { Icon: PaymentOutlined, text: "Securing Advanced Payment Gateways", color: "#40322E" },
-    { Icon: SpaOutlined, text: "Crafting Your Unique Fashion Journey", color: "#4A2C2A" },
-    { Icon: DiamondOutlined, text: "Polishing Luxurious Details", color: "#8B6D5C" },
-    { Icon: ColorLensOutlined, text: "Painting Your Style Canvas", color: "#C4A68A" },
-    { Icon: FavoriteOutlined, text: "Tailoring Your Fashion Experience", color: "#5B3A2A" }
+  const [step, setStep] = useState(0);
+  const [loading, setLoading] = useState(true);
+
+  // Revert back to emoji icons with some additions
+  const fashionIcons = [
+    "👗", "👜", "👠", "💄", "👚", "🎀", "💃", "👒", "💅", "👛", "🌹", "✨"
   ];
 
+  const fashionQuotes = [
+    "Style is a way to say who you are without having to speak",
+    "Fashion is the armor to survive everyday life",
+    "Create your own style... let it be unique",
+    "Elegance is elimination",
+    "Fashion fades, style is eternal",
+    "Dress like every day is a runway",
+    "Fashion is the poetry of clothing",
+    "Simplicity is the ultimate sophistication"
+  ];
+
+  const loadingPhrases = [
+    "Curating exclusive collections...",
+    "Handpicking trendy styles...",
+    "Preparing your fashion journey...",
+    "Arranging the virtual boutique...",
+    "Perfecting every detail...",
+    "Styling the perfect looks...",
+    "Adding designer touches...",
+    "Almost ready to dazzle..."
+  ];
+
+  // Color palette for gradient animations
+  const colors = {
+    primary: '#5c4033',
+    secondary: '#8B4513',
+    accent: '#A67B5B',
+    light: '#F4E1D2',
+    lighter: '#fff7ec'
+  };
+
   useEffect(() => {
-    const totalDuration = 24000; // 30 seconds
-    const intervalTime = totalDuration / icons.length;
-
-    const progressTimer = setInterval(() => {
-      setProgress(prev => Math.min(prev + (100 / icons.length), 100));
-    }, intervalTime);
-
     const timer = setTimeout(() => {
-      onComplete();
-    }, totalDuration);
+      if (step < 7) { // 8 total steps
+        setStep(prev => prev + 1);
+      } else {
+        setLoading(false);
+        setTimeout(() => onComplete(), 1000);
+      }
+    }, 3000); // 3 seconds per step = 24 seconds total
 
-    const iconTimer = setInterval(() => {
-      setActiveIndex(prev => 
-        prev < icons.length - 1 ? prev + 1 : prev
-      );
-    }, intervalTime);
+    return () => clearTimeout(timer);
+  }, [step, onComplete]);
 
-    return () => {
-      clearTimeout(timer);
-      clearInterval(iconTimer);
-      clearInterval(progressTimer);
-    };
-  }, [onComplete, icons.length]);
+  // Enhanced animations
+  const containerVariants = {
+    initial: { opacity: 0 },
+    animate: { 
+      opacity: 1,
+      transition: { staggerChildren: 0.2 }
+    }
+  };
 
-  const { Icon, text, color } = icons[activeIndex];
+  const logoVariants = {
+    animate: {
+      scale: [1, 1.05, 1],
+      rotate: [0, 1, -1, 0],
+      transition: {
+        duration: 4,
+        repeat: Infinity,
+        ease: "easeInOut"
+      }
+    }
+  };
 
   return (
-    <div className="fixed inset-0 z-50 bg-gradient-to-br from-[#F4E1D2] to-[#E3C7A6] 
-      flex flex-col justify-center items-center p-6 overflow-hidden">
-      
-      {/* Progress Bar */}
-      <div className="absolute top-0 left-0 w-full h-1 bg-gray-200">
-        <div 
-          className="h-full bg-[#5B3A2A] transition-all duration-500" 
-          style={{width: `${progress}%`}}
-        ></div>
-      </div>
-
-      {/* Animated Icon Container */}
-      <div className="relative w-48 h-48 flex justify-center items-center">
-        <div className="absolute inset-0 bg-white/20 rounded-full animate-ping"></div>
-        <div className="absolute inset-0 bg-white/10 rounded-full animate-pulse"></div>
-        <Icon 
-          sx={{ 
-            fontSize: 96, 
-            color: color,
-            position: 'relative',
-            zIndex: 10
-          }} 
-        />
-      </div>
-
-      {/* Text Animation */}
-      <p 
-        key={activeIndex} 
-        className="mt-6 text-2xl text-center font-headings text-[#4A2C2A] 
-        animate-fade-in-down tracking-wide"
-      >
-        {text}
-      </p>
-
-      {/* Subtle Background Pattern */}
-      <div 
-        className="absolute inset-0 opacity-5 pointer-events-none" 
-        style={{
-          backgroundImage: 'linear-gradient(45deg, #5B3A2A 25%, transparent 25%), linear-gradient(-45deg, #5B3A2A 25%, transparent 25%)',
-          backgroundSize: '40px 40px'
+    <div className="fixed inset-0 overflow-hidden">
+      {/* Animated Background */}
+      <motion.div 
+        className="absolute inset-0 bg-gradient-to-b from-[#F4E1D2] via-[#fff7ec] to-[#F4E1D2]"
+        animate={{
+          background: [
+            `linear-gradient(to right, ${colors.light}, ${colors.lighter})`,
+            `linear-gradient(to left, ${colors.light}, ${colors.lighter})`
+          ]
         }}
+        transition={{ duration: 3, repeat: Infinity, repeatType: "reverse" }}
       />
+
+      {/* Update Decorative Pattern with Emojis */}
+      <div className="absolute inset-0 opacity-5">
+        {[...Array(24)].map((_, i) => (
+          <motion.div
+            key={i}
+            className="absolute text-3xl transform"
+            style={{
+              left: `${Math.random() * 100}%`,
+              top: `${Math.random() * 100}%`,
+            }}
+            animate={{
+              rotate: [0, 360],
+              scale: [1, 1.2, 1],
+              opacity: [0.3, 0.6, 0.3],
+            }}
+            transition={{
+              duration: Math.random() * 3 + 2,
+              repeat: Infinity,
+              ease: "easeInOut",
+            }}
+          >
+            {fashionIcons[i % fashionIcons.length]}
+          </motion.div>
+        ))}
+      </div>
+
+      <motion.div
+        variants={containerVariants}
+        initial="initial"
+        animate="animate"
+        className="relative z-10 h-full flex flex-col items-center justify-center"
+      >
+        {/* Brand Logo with Enhanced Animation */}
+        <motion.div 
+          variants={logoVariants}
+          className="mb-12 relative"
+        >
+          <motion.h1 className="text-7xl font-headings text-[#5c4033] mb-2">
+           Welcome To Kura Fashion
+          </motion.h1>
+          {/* Animated underline */}
+          <motion.div 
+            className="h-1 w-32 mx-auto rounded-full"
+            animate={{
+              background: [
+                `linear-gradient(to right, transparent, ${colors.primary}, transparent)`,
+                `linear-gradient(to right, transparent, ${colors.secondary}, transparent)`
+              ]
+            }}
+            transition={{ duration: 2, repeat: Infinity, repeatType: "reverse" }}
+          />
+        </motion.div>
+
+        {/* Update Fashion Icons Circle with Emojis */}
+        <motion.div 
+          className="relative w-40 h-40 mx-auto mb-12"
+          animate={{ rotate: 360 }}
+          transition={{ duration: 12, repeat: Infinity, ease: "linear" }}
+        >
+          {fashionIcons.slice(0, 8).map((icon, index) => (
+            <motion.div
+              key={index}
+              className="absolute text-3xl transform-gpu"
+              style={{
+                transform: `rotate(${index * 45}deg) translateY(-60px)`,
+              }}
+              animate={{
+                scale: [1, 1.2, 1],
+                filter: [
+                  'brightness(1)',
+                  'brightness(1.2)',
+                  'brightness(1)'
+                ]
+              }}
+              transition={{
+                duration: 3,
+                delay: index * 0.2,
+                repeat: Infinity,
+                ease: "easeInOut"
+              }}
+            >
+              {icon}
+            </motion.div>
+          ))}
+        </motion.div>
+
+        {/* Fashion Quote with Enhanced Animation */}
+        <AnimatePresence mode='wait'>
+          <motion.p
+            key={step}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ 
+              opacity: 1, 
+              y: 0,
+              scale: [1, 1.02, 1]
+            }}
+            exit={{ opacity: 0, y: -20 }}
+            className="text-2xl font-texts text-[#8B4513] italic mb-12 min-h-[4rem] text-center max-w-2xl"
+          >
+            {fashionQuotes[step]}
+          </motion.p>
+        </AnimatePresence>
+
+        {/* Enhanced Progress Bar */}
+        <div className="relative w-80 h-2 bg-[#F4E1D2] rounded-full overflow-hidden mb-6">
+          <motion.div
+            className="absolute left-0 top-0 h-full"
+            animate={{
+              width: `${(step + 1) * 12.5}%`,
+              background: [
+                `linear-gradient(to right, ${colors.primary}, ${colors.secondary})`,
+                `linear-gradient(to right, ${colors.secondary}, ${colors.primary})`
+              ]
+            }}
+            transition={{
+              width: { duration: 0.5 },
+              background: { duration: 2, repeat: Infinity, repeatType: "reverse" }
+            }}
+          />
+        </div>
+
+        {/* Loading Text with Enhanced Animation */}
+        <AnimatePresence mode='wait'>
+          <motion.div
+            key={loadingPhrases[step]}
+            className="relative overflow-hidden px-4 py-2 rounded-full bg-white/20"
+          >
+            <motion.p
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="text-sm font-texts text-[#5c4033] relative z-10"
+            >
+              {loadingPhrases[step]}
+            </motion.p>
+            <motion.div
+              className="absolute inset-0 bg-gradient-to-r from-transparent via-white to-transparent"
+              animate={{
+                x: ['-100%', '100%'],
+              }}
+              transition={{
+                duration: 1.5,
+                repeat: Infinity,
+                ease: "easeInOut"
+              }}
+            />
+          </motion.div>
+        </AnimatePresence>
+      </motion.div>
     </div>
   );
 };

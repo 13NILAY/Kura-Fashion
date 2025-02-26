@@ -26,9 +26,8 @@ const Cart = () => {
   const [couponError, setCouponError] = useState("");
   const email = auth.email;
   const [paymentDetails, setPaymentDetails] = useState(null);
-
-  const deliveryCost = (1 * totalProductCost) / 100;
-  // const discount = 300;
+  const [deliverySettings, setDeliverySettings] = useState(null);
+  const [deliveryCost, setDeliveryCost] = useState(0);
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -71,11 +70,44 @@ const Cart = () => {
   }, [cart]);
 
   useEffect(() => {
+    const fetchDeliverySettings = async () => {
+      try {
+        const response = await axiosPrivate.get('/delivery');
+        setDeliverySettings(response.data);
+      } catch (err) {
+        console.error('Error fetching delivery settings:', err);
+      }
+    };
+    fetchDeliverySettings();
+  }, []);
+
+  useEffect(() => {
+    if (deliverySettings && totalProductCost > 0) {
+      let cost = 0;
+      switch (deliverySettings.type) {
+        case 'FREE_ALL':
+          cost = 0;
+          break;
+        case 'FREE_ABOVE':
+          cost = totalProductCost >= deliverySettings.minOrderForFreeDelivery 
+            ? 0 
+            : deliverySettings.standardDeliveryCharge;
+          break;
+        case 'FIXED':
+          cost = deliverySettings.standardDeliveryCharge;
+          break;
+        default:
+          cost = 0;
+      }
+      setDeliveryCost(cost);
+    }
+  }, [deliverySettings, totalProductCost]);
+
+  useEffect(() => {
     let total = totalProductCost + deliveryCost;
     if (appliedCoupon) {
       total -= appliedCoupon.discount;
     }
-    // console.log(1);
     setTotalCost(total);
   }, [totalProductCost, deliveryCost, appliedCoupon]);
 
@@ -253,7 +285,20 @@ const Cart = () => {
                   </div>
                   <div className="flex justify-between items-center">
                     <p>Delivery Charge:</p>
-                    <p className="text-black font-semibold">₹ {deliveryCost}</p>
+                    <p className="text-black font-semibold">
+                      {deliverySettings?.type === 'FREE_ALL' ? (
+                        'Free'
+                      ) : deliverySettings?.type === 'FREE_ABOVE' && totalProductCost >= deliverySettings.minOrderForFreeDelivery ? (
+                        'Free'
+                      ) : (
+                        `₹ ${deliveryCost}`
+                      )}
+                    </p>
+                    {deliverySettings?.type === 'FREE_ABOVE' && totalProductCost < deliverySettings.minOrderForFreeDelivery && (
+                      <p className="text-base text-red-600">
+                        Free delivery on purchase above ₹{deliverySettings.minOrderForFreeDelivery } !
+                      </p>
+                    )}
                   </div>
                   {appliedCoupon && (
                     <div className="flex justify-between items-center">

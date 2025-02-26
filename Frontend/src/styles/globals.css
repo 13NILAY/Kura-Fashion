@@ -1,0 +1,55 @@
+
+/* Define custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #F4E1D2;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #5c4033;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #40322e;
+}
+
+/* Custom text selection */
+::selection {
+  background: #5c4033;
+  color: #fff7ec;
+}
+
+/* Custom animations */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from { transform: translateY(20px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+/* Utility classes */
+.elegant-shadow {
+  box-shadow: 0 4px 20px -5px rgba(92, 64, 51, 0.1);
+}
+
+.elegant-border {
+  border: 1px solid rgba(92, 64, 51, 0.1);
+}
+
+/* Add these classes to your tailwind.config.js */
+.luxury-gradient {
+  background: linear-gradient(135deg, #F4E1D2 0%, #fff7ec 100%);
+}
+
+.text-gradient {
+  background: linear-gradient(135deg, #5c4033 0%, #8B4513 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}

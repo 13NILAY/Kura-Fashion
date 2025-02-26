@@ -27,10 +27,16 @@ const FeaturedProds = () => {
   if (loading) {
     return (
       <div className="w-full px-sectionPadding py-12 bg-[#F4E1D2]">
-        <div className="flex justify-center items-center h-40">
-          <div className="flex flex-col items-center gap-3">
-            <div className="w-12 h-12 border-4 border-[#5c4033] border-t-transparent rounded-full animate-spin"></div>
-            <p className="text-sm text-[#5c4033] font-medium">Loading products...</p>
+        <div className="flex justify-center items-center h-60">
+          <div className="relative">
+            {/* Animated hanger */}
+            <div className="w-16 h-16 border-4 border-[#5c4033] border-t-transparent rounded-full animate-spin">
+              <div className="absolute top-1/2 left-1/2 w-8 h-1 bg-[#5c4033] -translate-x-1/2"></div>
+            </div>
+            {/* Loading text */}
+            <p className="absolute -bottom-8 left-1/2 -translate-x-1/2 text-sm text-[#5c4033] font-medium whitespace-nowrap">
+              Loading collection...
+            </p>
           </div>
         </div>
       </div>

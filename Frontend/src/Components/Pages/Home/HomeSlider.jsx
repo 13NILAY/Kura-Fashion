@@ -114,7 +114,7 @@ const HomeSlider = () => {
           >
             <div className='flex justify-between max-md:flex-col-reverse items-center w-full'>
               <div className='flex flex-col justify-evenly items-start w-1/2 max-md:w-full'>
-                <h2 className='font-headings text-[#5B3A2A] text-5xl max-md:text-4xl max-mobileL:text-3xl my-4 font-bold'>
+                <h2 className='font-headings text-[#5B3A2A] text-3xl sm:text-4xl lg:text-5xl font-bold my-3'>
                   {slide.name}
                 </h2>
                 <p className='text-base max-mobileL:text-sm font-texts text-[#5B3A2A]/80'>
@@ -130,7 +130,7 @@ const HomeSlider = () => {
               <div className='flex justify-center items-center'>
                 <img
                   src={slide.image}
-                  className="h-64 max-md:h-52 max-[530px]:h-40 max-mobileM:h-32"
+                  className="h-48 sm:h-56 md:h-64 lg:h-72 w-auto object-contain"
                   alt={slide.title}
                 />
               </div>

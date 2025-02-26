@@ -46,9 +46,9 @@ const Shop = () => {
     <div className="min-h-screen bg-gradient-to-b from-[#f5ebe0] to-[#f9f4f1]">
       <div className="container mx-auto px-4 pt-24 pb-12">
         {/* Header */}
-        <div className="mb-12 text-center">
-          <h1 className="text-5xl font-bold text-[#40322e] mb-4 font-headings">Our Collection</h1>
-          <p className="text-[#5c4033] text-lg max-w-2xl mx-auto">Discover our curated collection of handpicked fashion pieces</p>
+        <div className="mb-8 text-center">
+          <h1 className="text-4xl sm:text-5xl font-bold text-[#40322e] mb-3 font-headings">Our Collection</h1>
+          <p className="text-base sm:text-lg text-[#5c4033] max-w-2xl mx-auto">Discover our curated collection of handpicked fashion pieces</p>
         </div>
 
         {/* Search and Filters */}
@@ -106,12 +106,12 @@ const Shop = () => {
                 <div className="absolute inset-x-0 -bottom-4 h-1 bg-gradient-to-r from-transparent via-[#5c4033]/30 to-transparent" />
               </div>
               
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-4 sm:gap-6">
                 {groupedProducts[category].map((product) => (
                   <SingleProduct 
                     key={product._id} 
                     product={product}
-                    className="hover:translate-y-[-4px]"
+                    className="transform-gpu hover:translate-y-[-2px] transition-transform duration-200"
                   />
                 ))}
               </div>

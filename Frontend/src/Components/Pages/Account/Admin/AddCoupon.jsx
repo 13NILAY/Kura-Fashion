@@ -14,6 +14,13 @@ const AddCoupon = () => {
     applicableTo: [] // This will be an array (e.g. categories or product IDs)
   });
 
+  // Add new states for delivery settings
+  const [deliverySettings, setDeliverySettings] = useState({
+    type: 'FIXED',
+    minOrderForFreeDelivery: 0,
+    standardDeliveryCharge: 0
+  });
+
   // Fetch all coupons
   useEffect(() => {
     const fetchCoupons = async () => {
@@ -26,6 +33,22 @@ const AddCoupon = () => {
     };
 
     fetchCoupons();
+  }, []);
+
+  // Fetch delivery settings
+  useEffect(() => {
+    const fetchDeliverySettings = async () => {
+      try {
+        const response = await axiosPrivate.get('/delivery');
+        if (response.data) {
+          setDeliverySettings(response.data);
+        }
+      } catch (err) {
+        console.error('Error fetching delivery settings:', err);
+      }
+    };
+
+    fetchDeliverySettings();
   }, []);
 
   // Handle form submission for adding a new coupon
@@ -55,6 +78,26 @@ const AddCoupon = () => {
       setCoupons(coupons.filter(coupon => coupon._id !== id));
     } catch (err) {
       console.error('Error deleting coupon:', err);
+    }
+  };
+
+  // Handle delivery settings update
+  const handleDeliverySettingsUpdate = async (e) => {
+    e.preventDefault();
+    try {
+      const response = await axiosPrivate.post('/delivery/update', 
+        JSON.stringify(deliverySettings),
+        {
+          headers: { 'Content-Type': 'application/json' },
+          withCredentials: true,
+        }
+      );
+      if (response.status === 201) {
+        alert('Delivery settings updated successfully');
+      }
+    } catch (err) {
+      console.error('Error updating delivery settings:', err);
+      alert('Error updating delivery settings');
     }
   };
 
@@ -219,6 +262,83 @@ const AddCoupon = () => {
             ))}
           </ul>
         )}
+      </div>
+
+      {/* Delivery Settings Section */}
+      <div className="mt-10 w-full max-w-2xl mx-auto bg-[#f9f4f1] p-8 rounded-lg shadow-lg">
+        <h3 className="text-2xl font-bold mb-6 text-center">Delivery Settings</h3>
+        <form onSubmit={handleDeliverySettingsUpdate}>
+          <div className="mb-6">
+            <label className="block text-lg font-semibold mb-2 text-[#5c4033]">
+              Delivery Type:
+            </label>
+            <select
+              className="block w-full text-sm text-[#40322e] border border-[#5c4033] rounded-lg p-2 focus:outline-none focus:ring focus:border-blue-300"
+              value={deliverySettings.type}
+              onChange={(e) => setDeliverySettings({...deliverySettings, type: e.target.value})}
+            >
+              <option value="FREE_ALL">Free Delivery for All Orders</option>
+              <option value="FREE_ABOVE">Free Delivery Above Minimum Order</option>
+              <option value="FIXED">Fixed Delivery Charge</option>
+            </select>
+          </div>
+
+          {deliverySettings.type === 'FREE_ABOVE' && (
+            <div className="mb-6">
+              <label className="block text-lg font-semibold mb-2 text-[#5c4033]">
+                Minimum Order for Free Delivery (₹):
+              </label>
+              <input
+                type="number"
+                className="block w-full text-sm text-[#40322e] border border-[#5c4033] rounded-lg p-2 focus:outline-none focus:ring focus:border-blue-300"
+                value={deliverySettings.minOrderForFreeDelivery}
+                onChange={(e) => setDeliverySettings({
+                  ...deliverySettings,
+                  minOrderForFreeDelivery: parseFloat(e.target.value)
+                })}
+              />
+            </div>
+          )}
+
+          {(deliverySettings.type === 'FIXED' || deliverySettings.type === 'FREE_ABOVE') && (
+            <div className="mb-6">
+              <label className="block text-lg font-semibold mb-2 text-[#5c4033]">
+                Standard Delivery Charge (₹):
+              </label>
+              <input
+                type="number"
+                className="block w-full text-sm text-[#40322e] border border-[#5c4033] rounded-lg p-2 focus:outline-none focus:ring focus:border-blue-300"
+                value={deliverySettings.standardDeliveryCharge}
+                onChange={(e) => setDeliverySettings({
+                  ...deliverySettings,
+                  standardDeliveryCharge: parseFloat(e.target.value)
+                })}
+              />
+            </div>
+          )}
+
+          <div className="text-center">
+            <button type="submit" className="bg-[#5c4033] text-[#fff7ec] font-bold py-2 px-4 rounded-lg shadow hover:bg-[#6a4c39]">
+              Update Delivery Settings
+            </button>
+          </div>
+        </form>
+
+        {/* Current Settings Display */}
+        <div className="mt-6 p-4 bg-white rounded-lg">
+          <h4 className="font-semibold mb-2">Current Settings:</h4>
+          <p><strong>Delivery Type:</strong> {
+            deliverySettings.type === 'FREE_ALL' ? 'Free Delivery for All Orders' :
+            deliverySettings.type === 'FREE_ABOVE' ? 'Free Delivery Above Minimum Order' :
+            'Fixed Delivery Charge'
+          }</p>
+          {deliverySettings.type === 'FREE_ABOVE' && (
+            <p><strong>Minimum Order for Free Delivery:</strong> ₹{deliverySettings.minOrderForFreeDelivery}</p>
+          )}
+          {(deliverySettings.type === 'FIXED' || deliverySettings.type === 'FREE_ABOVE') && (
+            <p><strong>Standard Delivery Charge:</strong> ₹{deliverySettings.standardDeliveryCharge}</p>
+          )}
+        </div>
       </div>
     </div>
   );

@@ -27,21 +27,15 @@ const Banners = () => {
   }, []);
 
   return (
-    <div className='px-sectionPadding flex max-sm:flex-col justify-between items-center w-full mt-10 gap-6'>
-      {/* Loop through banner data */}
+    <div className='px-3 sm:px-6 lg:px-8 flex flex-col sm:flex-row gap-4 sm:gap-6 w-full mt-8 sm:mt-10'>
       {bannerData.map((banner, index) => (
         <div
-          key={index} // Each item must have a unique key
-          className='w-1/2 max-sm:w-full bg-cover bg-center h-80 text-[#F4E1D2] font-semibold p-6 rounded-lg shadow-md shadow-[#6B4F3A] transition-transform duration-300 hover:scale-105' 
+          key={index}
+          className='w-full sm:w-1/2 bg-cover bg-center h-64 sm:h-72 lg:h-80 text-[#F4E1D2] p-4 sm:p-6 rounded-lg shadow-md transition-transform duration-300 hover:scale-[1.02]' 
           style={{ backgroundImage: `url(${banner.image})`, backgroundColor: '#8A5D3B' }}
         >
-          {/* <img
-            src={banner.image}
-            className="h-96 max-md:h-80 max-[530px]:h-64 max-mobileM:h-52"
-            alt={banner.title} // Updated the reference here
-          /> */}
-          <p className='text-5xl font-headings max-mobileL:text-4xl'>{banner.title}</p>
-          <p className='text-xl font-texts mt-4 max-mobileL:text-lg'>{banner.description}</p>
+          <h3 className='text-3xl sm:text-4xl lg:text-5xl font-headings mb-3'>{banner.title}</h3>
+          <p className='text-base sm:text-lg font-texts'>{banner.description}</p>
         </div>
       ))}
     </div>
