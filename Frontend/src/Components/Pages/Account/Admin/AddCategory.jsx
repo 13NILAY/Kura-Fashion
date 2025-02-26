@@ -28,7 +28,7 @@ const AddCategory = () => {
       try {
         setIsLoading(true);
         const response=await axiosPrivate.delete(`/Category/deleteCategory/${categoryId}`);
-        console.log(response)
+        // console.log(response)
         setCategories(categories.filter(category => category._id !== categoryId));
       } catch (error) {
         console.error("Error deleting category:", error);

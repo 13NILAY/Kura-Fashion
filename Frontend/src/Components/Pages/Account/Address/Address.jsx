@@ -7,7 +7,7 @@ const Address = () => {
   const navigate = useNavigate();
   const {auth}=useAuth();
   const axiosPrivate=useAxiosPrivate();
-  console.log(auth);
+  // console.log(auth);
   const location = useLocation();
   const from = location.state?.from?.pathname || "/";
 
@@ -28,7 +28,7 @@ const Address = () => {
     const fetchUser = async () => {
       try {
         const result = await axiosPrivate.get(`/users/${auth.email}`);
-        console.log(result);
+        // console.log(result);
         setFormData(result.data);
       } catch (err) {
         console.log(err);
@@ -52,7 +52,7 @@ const Address = () => {
           withCredentials: true
         }
       );
-      console.log(response);
+      // console.log(response);
     } catch (err) {
       console.log(err);
     }

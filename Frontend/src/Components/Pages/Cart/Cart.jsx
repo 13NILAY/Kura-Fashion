@@ -45,7 +45,7 @@ const Cart = () => {
     const fetchCartItems = async () => {
       try {
         const result = await axiosPrivate.get(`/users/viewMyCart/${email}`);
-        console.log(result);
+        // console.log(result);
         setCartDetails(result.data.cart);
         if (result.data.cart && result.data.cart.length > 0) {
           dispatch(fetchCart(result.data.cart));
@@ -59,11 +59,11 @@ const Cart = () => {
     };
     fetchCartItems();
   }, [dispatch, axiosPrivate, email]);
-  console.log(cart);
+  // console.log(cart);
   useEffect(() => {
     let totalProduct = 0;
     cart.forEach((prod) => {
-      console.log(prod)
+      // console.log(prod)
       totalProduct += prod.product.cost.value * prod.quantity;
     });
     setTotalProductCost(totalProduct);
@@ -121,7 +121,7 @@ const Cart = () => {
 
   const createOrder = async ({PaymentInfo},PStatus) => {
     try {
-      console.log(PaymentInfo);
+      // console.log(PaymentInfo);
       // Get the discount amount from applied coupon or 0 if no coupon
       const discount = appliedCoupon ? appliedCoupon.discount : 0;
       

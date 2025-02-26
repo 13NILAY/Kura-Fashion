@@ -12,7 +12,7 @@ const EditableSection = ({ type, contentTitle, contentInfo, index, onUpdate, onD
     
     const axiosPrivate = useAxiosPrivate();
     const isAdmin = auth?.roles?.includes(5150);
-    console.log(isAdmin);   
+    // console.log(isAdmin);   
 
     const handleSave = async () => {
         try {

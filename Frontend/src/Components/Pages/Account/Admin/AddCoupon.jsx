@@ -63,7 +63,7 @@ const AddCoupon = () => {
           withCredentials: true,
         }
       );
-      console.log(response);
+      // console.log(response);
       setCoupons([...coupons, response.data.coupon]);
       setNewCoupon({ code: '', discount: 0, minOrderValue: 0, maxDiscountValue: 0, expirationDate: '', isActive: true, applicableTo: [] });
     } catch (err) {

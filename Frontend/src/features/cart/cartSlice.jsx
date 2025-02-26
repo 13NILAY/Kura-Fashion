@@ -41,7 +41,7 @@ export const {addToCart,deleteFromCart,updateQuantity,fetchCart}=cartSlice.actio
 export const addProductToCart = ({product, quantity,selectedSize,selectedColor},axiosPrivate,email) => async (dispatch) => {
   
     try {
-      console.log(product);
+      // console.log(product);
       const newProduct = {
         id: product._id,
         product,
@@ -58,7 +58,7 @@ export const addProductToCart = ({product, quantity,selectedSize,selectedColor},
           withCredentials: true,
         }
       );
-      console.log(response);
+      // console.log(response);
       if(response.status==200){
         dispatch(addToCart(newProduct));
         // alert("Product Added to cart Successfully");
@@ -75,7 +75,7 @@ export const addProductToCart = ({product, quantity,selectedSize,selectedColor},
     // const data=new FormData();
     
     try{
-      console.log(_id);
+      // console.log(_id);
       const response = await axiosPrivate.delete(`/users/removeCart/${_id}`, {
         data: {
           productId: _id,
@@ -85,7 +85,7 @@ export const addProductToCart = ({product, quantity,selectedSize,selectedColor},
         headers: { 'Content-Type': 'application/json' },
       });
       // const result=await response.json();
-      console.log(response);
+      // console.log(response);
         dispatch(deleteFromCart(_id));
 
         // navigate('/shop');

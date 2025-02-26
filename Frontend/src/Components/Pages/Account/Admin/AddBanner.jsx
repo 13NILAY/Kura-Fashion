@@ -13,7 +13,7 @@ const AddBanner = () => {
     const fetchBanners = async () => {
       try {
         const response = await axiosPrivate.get("/banner/all");
-        console.log(response.data.data);
+        // console.log(response.data.data);
         setCurrentBanners(response.data.data);
       } catch (error) {
         console.log("Error fetching banners:", error);
@@ -92,9 +92,9 @@ const AddBanner = () => {
       const response = await axiosPrivate.delete(`/admin/deleteBanner/${bannerId}`,{
         headers: { 'Content-Type': 'application/json' },
       });
-      console.log(response);
+      // console.log(response);
       if (response.status === 200) {
-        console.log("Banner deleted successfully");
+        // console.log("Banner deleted successfully");
         // Remove the deleted slider from the currentSliders state
         setCurrentBanners(currentBanners.filter((b) => b._id !== bannerId));
       } else {

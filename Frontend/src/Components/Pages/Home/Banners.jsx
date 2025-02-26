@@ -16,7 +16,7 @@ const Banners = () => {
     const fetchBannerData = async () => {
       try {
         const response = await axios.get(BANNER_DATA_API);
-        console.log(response);
+        // console.log(response);
         setBannerData(response.data.data);
       } catch (error) {
         console.error('Error fetching banner data:', error);

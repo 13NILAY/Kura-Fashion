@@ -120,7 +120,7 @@ const AddSliders = () => {
         headers: { "Content-Type": "multipart/form-data" }
       });
       const imageUrl = uploadResponse.data.fileUrl;
-      console.log(uploadResponse);
+      // console.log(uploadResponse);
       if (uploadResponse.status === 200) {
         const newSlider = { ...slider, image: imageUrl };
 
@@ -134,7 +134,7 @@ const AddSliders = () => {
             },
           }
         );
-        console.log(sliderResponse)
+        // console.log(sliderResponse)
         if (sliderResponse.status === 201 && sliderResponse.data.success) {
           const addedSlider = sliderResponse.data.sliders[0] || { ...newSlider, _id: Date.now().toString() };
           showAlert("Slider added successfully", "success");
@@ -156,13 +156,13 @@ const AddSliders = () => {
 
   // Handle slider deletion
   const handleDelete = async (sliderId, imageUrl) => {
-      console.log(sliderId, imageUrl);
+      // console.log(sliderId, imageUrl);
     if (!window.confirm("Are you sure you want to delete this slider?")) return;
     
     try {
       setIsLoading(true);
       const publicId = getPublicIdFromUrl(imageUrl);
-      console.log(publicId);
+      // console.log(publicId);
       const response = await axiosPrivate.delete(`/admin/deleteSlider/${sliderId}`, {
         headers: { 'Content-Type': 'application/json' },
         data: { publicId } // Send the publicId in the request body

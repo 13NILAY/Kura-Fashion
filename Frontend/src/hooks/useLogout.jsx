@@ -12,7 +12,7 @@ const useLogout = () => {
             const response =await axiosPrivate('/logout',{
                 withCredentials:true 
             });
-            console.log(response);
+            // console.log(response);
         } catch(err){
             console.log(err);
         }

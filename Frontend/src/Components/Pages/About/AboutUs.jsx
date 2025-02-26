@@ -13,7 +13,7 @@ const AboutUs = () => {
         const fetchContent = async () => {
             try {
                 const response = await axiosPrivate.get('/content/get/about');
-                console.log(response.data);
+                // console.log(response.data);
                 setContent(response.data);
             } catch (error) {
                 console.error('Error fetching content:', error);
