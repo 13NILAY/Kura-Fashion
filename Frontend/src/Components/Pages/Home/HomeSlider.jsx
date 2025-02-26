@@ -10,6 +10,7 @@ import axios from "../../../api/axios";
 
 const HomeSlider = () => {
   const [sliderData, setSliderData] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
   const sliderRef = useRef(null);
 
   // Custom arrow components
@@ -43,17 +44,29 @@ const HomeSlider = () => {
     slidesToShow: 1,
     slidesToScroll: 1,
     autoplay: true,
-    speed: 800, // Increased speed for faster transitions
+    speed: 300, // Faster initial load
     autoplaySpeed: 4000, // Slightly longer display time
     cssEase: "cubic-bezier(0.4, 0, 0.2, 1)", // Smooth easing function
-    fade: true,
+    fade: false, // Disable fade initially
     pauseOnHover: true,
     swipe: true,
+    waitForAnimate: false, // Prevents animation queue buildup
+    lazyLoad: null, // Remove lazy loading
+    initialSlide: 0,
+    beforeChange: (current, next) => {
+      // Enable fade effect after first render
+      if (current === 0 && next === 1) {
+        settings.fade = true;
+        settings.speed = 500;
+      }
+    },
     responsive: [
       {
         breakpoint: 768,
         settings: {
-          arrows: false // Hide arrows on mobile
+          arrows: false, // Hide arrows on mobile
+          fade: false, // Disable fade on mobile for better performance
+          speed: 300
         }
       }
     ]
@@ -62,15 +75,28 @@ const HomeSlider = () => {
   useEffect(() => {
     const fetchSliderData = async () => {
       try {
+        setIsLoading(true);
         const response = await axios.get('/slider/all');
         setSliderData(response.data.data);
       } catch (error) {
         console.error('Error fetching slider data:', error);
+      } finally {
+        setIsLoading(false);
       }
     };
     
     fetchSliderData();
   }, []);
+
+  // Preload images
+  useEffect(() => {
+    if (sliderData.length > 0) {
+      sliderData.forEach(slide => {
+        const img = new Image();
+        img.src = slide.image;
+      });
+    }
+  }, [sliderData]);
 
   // Keyboard navigation
   useEffect(() => {
@@ -103,35 +129,61 @@ const HomeSlider = () => {
     sliderRef.current?.slickPrev();
   };
 
+  if (isLoading) {
+    return (
+      <div className="w-full relative mt-20 min-h-[300px] bg-[#F4D3C4] animate-pulse">
+        <div className="container mx-auto px-4 sm:px-sectionPadding py-8">
+          <div className="flex justify-between items-center">
+            <div className="w-1/2">
+              <div className="h-8 bg-[#5B3A2A]/20 rounded w-3/4 mb-4"></div>
+              <div className="h-4 bg-[#5B3A2A]/20 rounded w-full mb-2"></div>
+              <div className="h-4 bg-[#5B3A2A]/20 rounded w-2/3"></div>
+            </div>
+            <div className="w-1/2 flex justify-center">
+              <div className="w-48 h-48 rounded-lg bg-[#5B3A2A]/20"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (!sliderData.length) {
+    return null;
+  }
+
   return (
     <div className="w-full relative mt-20">
       <Slider ref={sliderRef} {...settings} className="w-full">
         {sliderData.map((slide, index) => (
           <div
             key={index}
-            className={`w-full px-sectionPadding py-8 relative 
+            className={`w-full px-4 sm:px-sectionPadding py-8 relative 
               ${backgroundColorClasses[index % backgroundColorClasses.length]}`}
           >
-            <div className='flex justify-between max-md:flex-col-reverse items-center w-full'>
-              <div className='flex flex-col justify-evenly items-start w-1/2 max-md:w-full'>
-                <h2 className='font-headings text-[#5B3A2A] text-3xl sm:text-4xl lg:text-5xl font-bold my-3'>
+            <div className='flex justify-between max-md:flex-col-reverse items-center w-full gap-6'>
+              <div className='flex flex-col justify-evenly items-start w-full md:w-1/2 space-y-4'>
+                <h2 className='font-headings text-[#5B3A2A] text-2xl sm:text-4xl lg:text-5xl font-bold'>
                   {slide.name}
                 </h2>
-                <p className='text-base max-mobileL:text-sm font-texts text-[#5B3A2A]/80'>
+                <p className='text-sm sm:text-base font-texts text-[#5B3A2A]/80 max-w-prose'>
                   {slide.description}
                 </p>
-                <div className="flex items-center text-xs mt-4 text-[#5B3A2A] font-semibold font-headings">
-                  <Link to='/shop' className="hover:underline transition duration-150 ease-in-out">
-                    View Collection
-                  </Link>
-                  <ArrowRightAltOutlinedIcon style={{ fontSize: "small", paddingTop: "3px" }} />
-                </div>
+                <Link 
+                  to='/shop' 
+                  className="inline-flex items-center text-sm sm:text-base text-[#5B3A2A] font-semibold font-headings hover:underline transition duration-150"
+                >
+                  View Collection
+                  <ArrowRightAltOutlinedIcon className="ml-1" />
+                </Link>
               </div>
-              <div className='flex justify-center items-center'>
+              <div className='w-full md:w-1/2 flex justify-center items-center'>
                 <img
                   src={slide.image}
                   className="h-48 sm:h-56 md:h-64 lg:h-72 w-auto object-contain"
-                  alt={slide.title}
+                  alt={slide.name}
+                  loading="eager" // Load first image immediately
+                  fetchPriority="high"
                 />
               </div>
             </div>
