@@ -227,64 +227,67 @@ const Cart = () => {
   return (
     <>
       <ScrollToTop />
-      <div className="mt-20 px-sectionPadding max-md:px-mobileScreenPadding pt-10 bg-[#f5ebe0]">
-        <div className="flex items-center justify-center text-5xl font-headings mb-10 text-[#5c4033]">Shopping Bag</div>
+      <div className="mt-20 px-4 sm:px-sectionPadding pt-6 sm:pt-10 bg-[#f5ebe0]">
+        <div className="flex items-center justify-center text-3xl sm:text-5xl font-headings mb-6 sm:mb-10 text-[#5c4033]">
+          Shopping Bag
+        </div>
+        
         {isCartEmpty ? (
-          <div className="text-4xl font-semibold font-texts text-[#5c4033] flex flex-col justify-center items-center w-full h-full my-12">
+          <div className="text-2xl sm:text-4xl font-semibold font-texts text-[#5c4033] flex flex-col justify-center items-center w-full h-full my-8 sm:my-12 text-center">
             <p>Your Shopping Bag is Empty.</p>
-            <p className="text-xl font-texts">Any items added to the bag will be visible here</p>
+            <p className="text-lg sm:text-xl font-texts mt-2">Any items added to the bag will be visible here</p>
             <Link to="/shop" className="flex justify-center items-center mt-3">
-              <button className="bg-[#5c4033] h-12 text-[#fff7ec] text-2xl px-8 py-2 rounded-sm border border-[#5c4033] my-3 hover:bg-[#40322e] transition">
+              <button className="bg-[#5c4033] h-10 sm:h-12 text-[#fff7ec] text-xl sm:text-2xl px-6 sm:px-8 py-1 sm:py-2 rounded-sm border border-[#5c4033] my-3 hover:bg-[#40322e] transition">
                 Continue Shopping
               </button>
             </Link>
           </div>
         ) : (
-          <>
-            <div className="flex justify-between items-start max-md:flex-col">
-              <div className="w-3/5 max-[940px]:w-1/2 max-md:w-4/5 max-sm:w-full">
-                {cart.map((prod) => (
-                  <CartProd
-                    key={prod._id}
-                    _id={prod._id}
-                    product={prod.product}
-                    selectedSize={prod.selectedSize}
-                    selectedColor={prod.selectedColor}
-                    quantity={prod.quantity}
-                    onDelete={handleDelete}
+          <div className="flex flex-col lg:flex-row justify-between items-start gap-6">
+            <div className="w-full lg:w-3/5">
+              {cart.map((prod) => (
+                <CartProd
+                  key={prod._id}
+                  _id={prod._id}
+                  product={prod.product}
+                  selectedSize={prod.selectedSize}
+                  selectedColor={prod.selectedColor}
+                  quantity={prod.quantity}
+                  onDelete={handleDelete}
+                />
+              ))}
+            </div>
+
+            {/* Order Summary */}
+            <div className="w-full lg:w-2/5 my-3 border border-[#5c4033] p-4 sm:p-6 rounded-sm bg-[#fff7ec] shadow-lg">
+              <div className="border-b-[1px] border-[#5c4033] pb-2">
+                <div className="flex items-center gap-2">
+                  <p className="text-sm sm:text-base font-semibold font-headings text-[#5c4033]">Coupon: </p>
+                  <input
+                    type="text"
+                    value={couponCode}
+                    onChange={(e) => setCouponCode(e.target.value)}
+                    className="outline-none border border-[#5c4033] p-2 rounded-sm w-full bg-[#f9f4f1] text-[#40322e] text-sm sm:text-base"
+                    placeholder="Enter coupon code"
                   />
-                ))}
+                </div>
+                <button
+                  onClick={applyCoupon}
+                  className="w-full p-2 text-sm sm:text-base font-semibold font-texts bg-[#5c4033] my-3 rounded-sm text-[#fff7ec] border border-[#5c4033] hover:bg-[#40322e] transition"
+                >
+                  Apply Coupon
+                </button>
+                {couponError && <p className="text-red-500 text-xs sm:text-sm">{couponError}</p>}
               </div>
 
-              {/* Order Summary */}
-              <div className="w-1/2 max-md:w-4/5 max-sm:w-full my-3 md:ml-6 border border-[#5c4033] p-6 rounded-sm bg-[#fff7ec] shadow-lg">
-                <div className="border-b-[1px] border-[#5c4033] pb-2">
-                  <div className="flex items-center">
-                    <p className="text-base font-semibold font-headings mr-2 text-[#5c4033]">Coupon: </p>
-                    <input
-                      type="text"
-                      value={couponCode}
-                      onChange={(e) => setCouponCode(e.target.value)}
-                      className="outline-none border border-[#5c4033] p-2 rounded-sm w-full bg-[#f9f4f1] text-[#40322e]"
-                      placeholder="Enter coupon code"
-                    />
-                  </div>
-                  <button
-                    onClick={applyCoupon}
-                    className="w-full p-2 text-base font-semibold font-texts bg-[#5c4033] my-3 rounded-sm text-[#fff7ec] border border-[#5c4033] hover:bg-[#40322e] transition"
-                  >
-                    Apply Coupon
-                  </button>
-                  {couponError && <p className="text-red-500 text-sm">{couponError}</p>}
+              <div className="text-sm sm:text-base font-texts text-[#5c4033] my-4 border-b-[1px] border-[#5c4033] pb-3 space-y-2">
+                <div className="flex justify-between items-center">
+                  <p>Product Total:</p>
+                  <p className="text-black font-semibold">₹ {totalProductCost}</p>
                 </div>
-
-                <div className="text-base font-texts text-[#5c4033] my-4 border-b-[1px] border-[#5c4033] pb-3">
-                  <div className="flex justify-between items-center">
-                    <p>Product Total:</p>
-                    <p className="text-black font-semibold">₹ {totalProductCost}</p>
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <p>Delivery Charge:</p>
+                <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2">
+                  <p>Delivery Charge:</p>
+                  <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-3">
                     <p className="text-black font-semibold">
                       {deliverySettings?.type === 'FREE_ALL' ? (
                         'Free'
@@ -295,39 +298,39 @@ const Cart = () => {
                       )}
                     </p>
                     {deliverySettings?.type === 'FREE_ABOVE' && totalProductCost < deliverySettings.minOrderForFreeDelivery && (
-                      <p className="text-base text-red-600">
-                        Free delivery on purchase above ₹{deliverySettings.minOrderForFreeDelivery } !
+                      <p className="text-xs sm:text-sm text-red-600 italic">
+                        Free delivery on orders above ₹{deliverySettings.minOrderForFreeDelivery}!
                       </p>
                     )}
                   </div>
-                  {appliedCoupon && (
-                    <div className="flex justify-between items-center">
-                      <p>Coupon Discount:</p>
-                      <p className="text-green-600 font-semibold">-₹ {appliedCoupon.discount}</p>
-                    </div>
-                  )}
                 </div>
-
-                <div className="flex justify-between items-center font-bold text-lg font-texts text-[#5c4033]">
-                  <p>Total:</p>
-                  <p>₹ {totalCost}</p>
-                </div>
-
-                <button
-                  onClick={handleConfirmAddress}
-                  className="text-lg font-texts font-semibold w-full p-2 bg-[#5c4033] text-[#fff7ec] mt-4 rounded-sm border border-[#5c4033] shadow hover:bg-[#40322e]"
-                >
-                  Confirm Your Address
-                </button>
-                <button
-                  onClick={handleCheckOut}
-                  className="text-lg font-texts font-semibold w-full p-2 bg-[#5c4033] text-[#fff7ec] mt-4 rounded-sm border border-[#5c4033] shadow hover:bg-[#40322e]"
-                >
-                  Proceed to Pay
-                </button>
+                {appliedCoupon && (
+                  <div className="flex justify-between items-center">
+                    <p>Coupon Discount:</p>
+                    <p className="text-green-600 font-semibold">-₹ {appliedCoupon.discount}</p>
+                  </div>
+                )}
               </div>
+
+              <div className="flex justify-between items-center font-bold text-base sm:text-lg font-texts text-[#5c4033]">
+                <p>Total:</p>
+                <p>₹ {totalCost}</p>
+              </div>
+
+              <button
+                onClick={handleConfirmAddress}
+                className="text-base sm:text-lg font-texts font-semibold w-full p-2 bg-[#5c4033] text-[#fff7ec] mt-4 rounded-sm border border-[#5c4033] shadow hover:bg-[#40322e]"
+              >
+                Confirm Your Address
+              </button>
+              <button
+                onClick={handleCheckOut}
+                className="text-base sm:text-lg font-texts font-semibold w-full p-2 bg-[#5c4033] text-[#fff7ec] mt-4 rounded-sm border border-[#5c4033] shadow hover:bg-[#40322e]"
+              >
+                Proceed to Pay
+              </button>
             </div>
-          </>
+          </div>
         )}
       </div>
     </>

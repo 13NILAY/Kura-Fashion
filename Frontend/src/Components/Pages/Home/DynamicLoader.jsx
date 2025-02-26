@@ -94,7 +94,7 @@ const DynamicLoader = ({ onComplete }) => {
         {[...Array(24)].map((_, i) => (
           <motion.div
             key={i}
-            className="absolute text-3xl transform"
+            className="absolute text-xl md:text-3xl transform"
             style={{
               left: `${Math.random() * 100}%`,
               top: `${Math.random() * 100}%`,
@@ -119,19 +119,19 @@ const DynamicLoader = ({ onComplete }) => {
         variants={containerVariants}
         initial="initial"
         animate="animate"
-        className="relative z-10 h-full flex flex-col items-center justify-center"
+        className="relative z-10 h-full flex flex-col items-center justify-center p-4"
       >
         {/* Brand Logo with Enhanced Animation */}
         <motion.div 
           variants={logoVariants}
-          className="mb-12 relative"
+          className="mb-8 md:mb-12 relative"
         >
-          <motion.h1 className="text-7xl font-headings text-[#5c4033] mb-2">
+          <motion.h1 className="text-4xl md:text-7xl font-headings text-[#5c4033] mb-2 text-center">
            Welcome To Kura Fashion
           </motion.h1>
           {/* Animated underline */}
           <motion.div 
-            className="h-1 w-32 mx-auto rounded-full"
+            className="h-1 w-24 md:w-32 mx-auto rounded-full"
             animate={{
               background: [
                 `linear-gradient(to right, transparent, ${colors.primary}, transparent)`,
@@ -144,16 +144,16 @@ const DynamicLoader = ({ onComplete }) => {
 
         {/* Update Fashion Icons Circle with Emojis */}
         <motion.div 
-          className="relative w-40 h-40 mx-auto mb-12"
+          className="relative w-28 h-28 md:w-40 md:h-40 mx-auto mb-8 md:mb-12"
           animate={{ rotate: 360 }}
           transition={{ duration: 12, repeat: Infinity, ease: "linear" }}
         >
           {fashionIcons.slice(0, 8).map((icon, index) => (
             <motion.div
               key={index}
-              className="absolute text-3xl transform-gpu"
+              className="absolute text-2xl md:text-3xl transform-gpu"
               style={{
-                transform: `rotate(${index * 45}deg) translateY(-60px)`,
+                transform: `rotate(${index * 45}deg) translateY(-40px) md:translateY(-60px)`,
               }}
               animate={{
                 scale: [1, 1.2, 1],
@@ -186,14 +186,14 @@ const DynamicLoader = ({ onComplete }) => {
               scale: [1, 1.02, 1]
             }}
             exit={{ opacity: 0, y: -20 }}
-            className="text-2xl font-texts text-[#8B4513] italic mb-12 min-h-[4rem] text-center max-w-2xl"
+            className="text-lg md:text-2xl font-texts text-[#8B4513] italic mb-8 md:mb-12 min-h-[3rem] md:min-h-[4rem] text-center max-w-xs md:max-w-2xl px-4"
           >
             {fashionQuotes[step]}
           </motion.p>
         </AnimatePresence>
 
         {/* Enhanced Progress Bar */}
-        <div className="relative w-80 h-2 bg-[#F4E1D2] rounded-full overflow-hidden mb-6">
+        <div className="relative w-64 md:w-80 h-2 bg-[#F4E1D2] rounded-full overflow-hidden mb-4 md:mb-6">
           <motion.div
             className="absolute left-0 top-0 h-full"
             animate={{
@@ -214,13 +214,13 @@ const DynamicLoader = ({ onComplete }) => {
         <AnimatePresence mode='wait'>
           <motion.div
             key={loadingPhrases[step]}
-            className="relative overflow-hidden px-4 py-2 rounded-full bg-white/20"
+            className="relative overflow-hidden px-3 md:px-4 py-1.5 md:py-2 rounded-full bg-white/20"
           >
             <motion.p
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="text-sm font-texts text-[#5c4033] relative z-10"
+              className="text-xs md:text-sm font-texts text-[#5c4033] relative z-10"
             >
               {loadingPhrases[step]}
             </motion.p>
