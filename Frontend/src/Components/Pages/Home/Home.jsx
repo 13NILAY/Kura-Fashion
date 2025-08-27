@@ -3,7 +3,6 @@ import ScrollToTop from '../../../ScrollToTop';
 import HomeSlider from './HomeSlider';
 import FeaturedProds from './FeaturedProds';
 import Banners from './Banners';
-import DynamicLoader from './DynamicLoader';
 
 const Home = () => {
   const [isFirstLoad, setIsFirstLoad] = useState(() => {
@@ -60,16 +59,14 @@ const Home = () => {
 
   return (
     <>
-      {isFirstLoad ? (
-        <DynamicLoader onComplete={handleLoadComplete} />
-      ) : (
+      
         <>
           <ScrollToTop/>
           <HomeSlider/>
           <FeaturedProds/>
           <Banners/>
         </>
-      )}
+      
     </>
   );
 };
