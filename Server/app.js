@@ -12,6 +12,7 @@ const verifyRoles=require("./middleware/verifyRoles");
 const PORT=process.env.PORT;
 const URL=process.env.URL;
 const ROLES_LIST=require("./config/roles_list");
+const healthRouter=require("./routes/healthRoutes");
 // Connect to MongoDB
 const dbconnect= async()=>{
   await mongoose.connect(URL)
@@ -39,6 +40,7 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 
 //routes
+app.use("/api/v1/health", healthRouter);
 app.use('/register',require('./routes/register'));
 app.use("/login",require('./routes/auth'));
 app.use("/refresh" ,require('./routes/refresh'));
@@ -52,6 +54,19 @@ app.use("/coupon",require("./routes/coupon"));
 app.use("/delivery",require("./routes/deliverySettings"));
 app.use("/order",require("./routes/order") );
 app.use("/content",require("./routes/content"));
+
+if (process.env.RENDER === "true") {
+    setInterval(() => {
+        fetch(`${process.env.HEALTH_URL || "http://localhost:8080/api/v1/health"}`)
+            .then(res => res.json())
+            .then(data => {
+                console.log("Health ping:", data);
+            })
+            .catch(err => {
+                console.error("Health ping failed:", err);
+            });
+    }, 10 * 60 * 1000);
+}
 
 app.use(verifyJWT);
 app.use('/users',require('./routes/user'));
