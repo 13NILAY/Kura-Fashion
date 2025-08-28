@@ -96,34 +96,34 @@ It provides a seamless online shopping experience where users can browse product
 
 ### 1️⃣ Clone the repository
 
-git clone https://github.com/your-username/kura-fashion.git
-cd kura-fashion
+# git clone https://github.com/13NILAY/Kura-Fashion
+# cd kura-fashion
 
 ### 2️⃣ Install dependencies
 # Install frontend dependencies
-cd client
-npm install
+# cd ../client
+# npm install
 
 # Install backend dependencies
-cd ../server
-npm install
+# cd ../server
+# npm install
 
 ### 3️⃣ Setup Environment Variables
 
 ### 4️⃣ Run the project
 
 # Run backend (in server folder)
-nodemon app.js
+# nodemon app.js
 
 # Run frontend (in client folder)
-npm run dev
+# npm run dev
 
 ## 🌐 Deployment
 
-Frontend: Vercel
-Backend: Render
-Database: MongoDB Atlas
-Images: Cloudinary
+# Frontend: Vercel
+# Backend: Render
+# Database: MongoDB Atlas
+# Images: Cloudinary
 
 ---
 
