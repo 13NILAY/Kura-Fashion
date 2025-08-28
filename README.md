@@ -46,15 +46,10 @@ It provides a seamless online shopping experience where users can browse product
 
 ## 🔮 Future Improvements
 - **Wishlist / Save for Later** feature  
-- **Product Reviews & Ratings** for better customer trust  
-- **Advanced search & filters** (price, category, color, popularity)  
-- **Personalized recommendations** based on browsing history  
-- **Order history with reorder option**  
-- **Admin analytics dashboard** (sales, revenue, top-selling products)  
-- **Multi-payment support** (UPI, Stripe, PayPal, wallets)  
+- **Product Reviews & Ratings** for better customer trust   
+- **Personalized recommendations** based on browsing history   
 - **Email/SMS notifications** for order updates and offers  
-- **Loyalty & referral program** to retain users  
-- **PWA support** (installable like an app)  
+- **Loyalty & referral program** to retain users   
 - **Dark Mode** for better user experience  
 
 ---
@@ -96,34 +91,32 @@ It provides a seamless online shopping experience where users can browse product
 
 ### 1️⃣ Clone the repository
 
-# git clone https://github.com/13NILAY/Kura-Fashion
-# cd kura-fashion
+#### git clone https://github.com/13NILAY/Kura-Fashion
+#### cd kura-fashion
 
 ### 2️⃣ Install dependencies
-# Install frontend dependencies
-# cd ../client
-# npm install
+#### Install frontend dependencies
+- cd ../client
+- npm install
 
-# Install backend dependencies
-# cd ../server
-# npm install
+#### Install backend dependencies
+- cd ../server
+- npm install
 
 ### 3️⃣ Setup Environment Variables
 
 ### 4️⃣ Run the project
 
-# Run backend (in server folder)
-# nodemon app.js
-
-# Run frontend (in client folder)
-# npm run dev
+#### Run backend (in server folder)
+ - nodemon app.js
+#### Run frontend (in client folder)
+ - npm run dev
 
 ## 🌐 Deployment
-
-# Frontend: Vercel
-# Backend: Render
-# Database: MongoDB Atlas
-# Images: Cloudinary
+- Frontend: Vercel
+- Backend: Render
+- Database: MongoDB Atlas
+- Images: Cloudinary
 
 ---
 
